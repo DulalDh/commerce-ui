@@ -1,0 +1,14 @@
+{
+  "name": "@org/storefront",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@org/api-client": "*",
+    "@org/auth": "*",
+    "@org/config": "*",
+    "@org/theme": "*",
+    "@org/types": "*",
+    "@org/ui": "*",
+    "@org/utils": "*"
+  }
+}

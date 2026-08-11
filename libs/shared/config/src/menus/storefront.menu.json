@@ -1,0 +1,18 @@
+[
+  { "id": "home", "label": "Home", "route": "/" },
+  { "id": "products", "label": "Shop", "route": "/products" },
+  { "id": "services", "label": "Services", "route": "/services" },
+  { "id": "search", "label": "Search", "route": "/search" },
+  { "id": "cart", "label": "Cart", "route": "/cart" },
+  {
+    "id": "account",
+    "label": "My Account",
+    "permission": "account.view",
+    "children": [
+      { "id": "account-orders", "label": "Orders", "route": "/account/orders" },
+      { "id": "account-bookings", "label": "Bookings", "route": "/account/bookings" },
+      { "id": "account-wallet", "label": "Wallet", "route": "/account/wallet" },
+      { "id": "account-loyalty", "label": "Loyalty", "route": "/account/loyalty" }
+    ]
+  }
+]

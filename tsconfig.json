@@ -1,0 +1,38 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/tenant-admin"
+    },
+    {
+      "path": "./apps/super-admin"
+    },
+    {
+      "path": "./apps/storefront"
+    },
+    {
+      "path": "./libs/shared/ui"
+    },
+    {
+      "path": "./libs/shared/theme"
+    },
+    {
+      "path": "./libs/shared/api-client"
+    },
+    {
+      "path": "./libs/shared/auth"
+    },
+    {
+      "path": "./libs/shared/config"
+    },
+    {
+      "path": "./libs/shared/types"
+    },
+    {
+      "path": "./libs/shared/utils"
+    }
+  ],
+  "compilerOptions": {}
+}

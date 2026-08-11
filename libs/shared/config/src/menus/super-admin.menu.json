@@ -1,0 +1,40 @@
+[
+  { "id": "dashboard", "label": "Dashboard", "icon": "home", "route": "/" },
+  { "id": "merchants", "label": "Merchants & Providers", "icon": "briefcase", "route": "/merchants" },
+  {
+    "id": "marketplace",
+    "label": "Marketplace",
+    "icon": "globe",
+    "children": [
+      { "id": "approval-queue", "label": "Approval Queue", "route": "/marketplace/queue" }
+    ]
+  },
+  {
+    "id": "rbac",
+    "label": "Roles & Permissions",
+    "icon": "shield",
+    "children": [
+      { "id": "roles", "label": "Roles", "route": "/rbac/roles" },
+      { "id": "permissions", "label": "Permissions", "route": "/rbac/permissions" }
+    ]
+  },
+  { "id": "plans", "label": "Subscription Plans", "icon": "credit-card", "route": "/plans" },
+  {
+    "id": "cms",
+    "label": "CMS",
+    "icon": "file-text",
+    "children": [
+      { "id": "pages", "label": "Pages", "route": "/cms/pages" },
+      { "id": "blog", "label": "Blog Posts", "route": "/cms/blog" },
+      { "id": "faqs", "label": "FAQs", "route": "/cms/faqs" }
+    ]
+  },
+  {
+    "id": "notification-templates",
+    "label": "Notification Templates",
+    "icon": "bell",
+    "route": "/notification-templates"
+  },
+  { "id": "reports", "label": "Reports", "icon": "bar-chart", "route": "/reports" },
+  { "id": "settings", "label": "Settings", "icon": "settings", "route": "/settings" }
+]

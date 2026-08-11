@@ -1,0 +1,69 @@
+[
+  { "id": "dashboard", "label": "Dashboard", "icon": "home", "route": "/" },
+  { "id": "store", "label": "Store Profile", "icon": "storefront", "route": "/store" },
+  {
+    "id": "catalog",
+    "label": "Catalog",
+    "icon": "tag",
+    "tenantTypes": ["merchant", "both"],
+    "children": [
+      { "id": "products", "label": "Products", "route": "/catalog/products" },
+      { "id": "categories", "label": "Categories", "route": "/catalog/categories" },
+      { "id": "brands", "label": "Brands", "route": "/catalog/brands" },
+      { "id": "tags", "label": "Tags", "route": "/catalog/tags" }
+    ]
+  },
+  {
+    "id": "inventory",
+    "label": "Inventory",
+    "icon": "box",
+    "route": "/inventory",
+    "tenantTypes": ["merchant", "both"]
+  },
+  {
+    "id": "orders",
+    "label": "Orders",
+    "icon": "receipt",
+    "route": "/orders",
+    "tenantTypes": ["merchant", "both"]
+  },
+  {
+    "id": "services",
+    "label": "Services",
+    "icon": "wrench",
+    "tenantTypes": ["service_provider", "both"],
+    "children": [
+      { "id": "service-listings", "label": "Service Listings", "route": "/services/listings" },
+      { "id": "service-categories", "label": "Service Categories", "route": "/services/categories" },
+      { "id": "staff", "label": "Staff", "route": "/services/staff" },
+      { "id": "vehicles", "label": "Vehicles", "route": "/services/vehicles" }
+    ]
+  },
+  {
+    "id": "bookings",
+    "label": "Bookings",
+    "icon": "calendar",
+    "tenantTypes": ["service_provider", "both"],
+    "children": [
+      { "id": "bookings-list", "label": "All Bookings", "route": "/bookings" },
+      { "id": "bookings-calendar", "label": "Calendar", "route": "/bookings/calendar" },
+      { "id": "holidays", "label": "Holidays", "route": "/bookings/holidays" }
+    ]
+  },
+  { "id": "customers", "label": "Customers", "icon": "users", "route": "/customers" },
+  {
+    "id": "promotions",
+    "label": "Promotions",
+    "icon": "percent",
+    "children": [
+      { "id": "coupons", "label": "Coupons", "route": "/promotions/coupons" },
+      { "id": "flash-sales", "label": "Flash Sales", "route": "/promotions/flash-sales" },
+      { "id": "promotion-rules", "label": "Bundle / BOGO Rules", "route": "/promotions/rules" }
+    ]
+  },
+  { "id": "reviews", "label": "Reviews", "icon": "star", "route": "/reviews" },
+  { "id": "subscriptions", "label": "Subscription", "icon": "credit-card", "route": "/subscriptions" },
+  { "id": "reports", "label": "Reports", "icon": "bar-chart", "route": "/reports" },
+  { "id": "notifications", "label": "Notifications", "icon": "bell", "route": "/notifications" },
+  { "id": "settings", "label": "Settings", "icon": "settings", "route": "/settings" }
+]
