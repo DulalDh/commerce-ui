@@ -115,6 +115,78 @@ const router = createRouter({
       component: () => import('../views/promotions/PromotionRulesView.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/services/profile',
+      name: 'services-profile',
+      component: () => import('../views/services/ProviderProfileView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/services/categories',
+      name: 'services-categories',
+      component: () => import('../views/services/ServiceCategoriesView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/services/listings',
+      name: 'services-listings',
+      component: () => import('../views/services/ServiceListingsView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/services/listings/:id',
+      name: 'services-listing-form',
+      component: () => import('../views/services/ServiceFormView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/services/staff',
+      name: 'services-staff',
+      component: () => import('../views/services/StaffListView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/services/staff/:id',
+      name: 'services-staff-detail',
+      component: () => import('../views/services/StaffDetailView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/services/vehicles',
+      name: 'services-vehicles',
+      component: () => import('../views/services/VehiclesView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/bookings',
+      name: 'bookings',
+      component: () => import('../views/bookings/BookingsListView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/bookings/calendar',
+      name: 'bookings-calendar',
+      component: () => import('../views/bookings/ProviderCalendarView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/bookings/holidays',
+      name: 'bookings-holidays',
+      component: () => import('../views/bookings/HolidaysView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/bookings/:id',
+      name: 'booking-detail',
+      component: () => import('../views/bookings/BookingDetailView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/reviews',
+      name: 'reviews',
+      component: () => import('../views/reviews/ReviewsView.vue'),
+      meta: { requiresAuth: true },
+    },
   ],
 });
 

@@ -33,6 +33,7 @@
     "icon": "wrench",
     "tenantTypes": ["service_provider", "both"],
     "children": [
+      { "id": "provider-profile", "label": "Provider Profile", "route": "/services/profile" },
       { "id": "service-listings", "label": "Service Listings", "route": "/services/listings" },
       { "id": "service-categories", "label": "Service Categories", "route": "/services/categories" },
       { "id": "staff", "label": "Staff", "route": "/services/staff" },

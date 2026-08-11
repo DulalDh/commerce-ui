@@ -23,6 +23,17 @@ const router = createRouter({
       component: () => import('../views/search/SearchView.vue'),
     },
     {
+      path: '/services',
+      name: 'services',
+      component: () => import('../views/services/ServiceListingView.vue'),
+    },
+    {
+      path: '/services/:slug',
+      name: 'service-detail',
+      component: () => import('../views/services/ServiceDetailView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/checkout',
       name: 'checkout',
       component: () => import('../views/checkout/CheckoutView.vue'),
@@ -36,6 +47,12 @@ const router = createRouter({
       path: '/account/orders',
       name: 'account-orders',
       component: () => import('../views/account/AccountOrdersView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/account/bookings',
+      name: 'account-bookings',
+      component: () => import('../views/account/AccountBookingsView.vue'),
       meta: { requiresAuth: true },
     },
   ],
