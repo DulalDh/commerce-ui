@@ -1,28 +1,13 @@
 import { api } from '../http';
+import type {
+  LoginPayload,
+  RegisterTenantPayload,
+  RegisterUserPayload,
+  AuthTokens,
+  AuthUser,
+} from '@org/types';
 
-export interface LoginPayload {
-  email: string;
-  password: string;
-}
-
-export interface RegisterTenantPayload {
-  tenant: Record<string, unknown>;
-  owner: Record<string, unknown>;
-}
-
-export interface RegisterUserPayload {
-  name: string;
-  email: string;
-  password: string;
-  password_confirmation: string;
-}
-
-export interface AuthTokens {
-  access_token: string;
-  refresh_token?: string;
-  token_type?: string;
-  user?: Record<string, unknown>;
-}
+export type { LoginPayload, RegisterTenantPayload, RegisterUserPayload, AuthTokens, AuthUser };
 
 export const authService = {
   login: (payload: LoginPayload) => api.post<AuthTokens>('/auth/login', payload),

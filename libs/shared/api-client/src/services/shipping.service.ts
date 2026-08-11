@@ -1,5 +1,6 @@
 import { api } from '../http';
+import type { ShippingRatePayload, ShippingRateResult } from '@org/types';
 
 export const shippingService = {
-  calculateRate: (payload: Record<string, unknown>) => api.post('/shipping/rate', payload),
+  calculateRate: (payload: ShippingRatePayload) => api.post<ShippingRateResult>('/shipping/rate', payload),
 };

@@ -1,8 +1,9 @@
 import { api } from '../http';
 import { resource } from './resource';
+import type { Plan, CurrentSubscription } from '@org/types';
 
-export const plansService = resource('/plans');
+export const plansService = resource<Plan>('/plans');
 export const subscriptionsService = {
-  subscribe: (payload: Record<string, unknown>) => api.post('/subscriptions/subscribe', payload),
-  current: () => api.get('/subscriptions/current'),
+  subscribe: (payload: { plan_id: string | number }) => api.post('/subscriptions/subscribe', payload),
+  current: () => api.get<CurrentSubscription>('/subscriptions/current'),
 };

@@ -1,15 +1,16 @@
 import { api } from '../http';
 import { resource } from './resource';
+import type { CmsPage, PageVersion, BlogPost, Faq } from '@org/types';
 
 export const cmsPublicService = {
-  pages: () => api.get('/cms/pages'),
-  blogPosts: () => api.get('/cms/blog-posts'),
-  faqs: () => api.get('/cms/faqs'),
+  pages: () => api.get<CmsPage[]>('/cms/pages'),
+  blogPosts: () => api.get<BlogPost[]>('/cms/blog-posts'),
+  faqs: () => api.get<Faq[]>('/cms/faqs'),
 };
 
 export const pagesService = {
-  ...resource('/admin/pages'),
-  versions: (pageId: string | number) => api.get(`/admin/pages/${pageId}/versions`),
+  ...resource<CmsPage>('/admin/pages'),
+  versions: (pageId: string | number) => api.get<PageVersion[]>(`/admin/pages/${pageId}/versions`),
 };
-export const blogPostsService = resource('/admin/blog-posts');
-export const faqsService = resource('/admin/faqs');
+export const blogPostsService = resource<BlogPost>('/admin/blog-posts');
+export const faqsService = resource<Faq>('/admin/faqs');

@@ -6,17 +6,11 @@ import {
   type LoginPayload,
   type RegisterTenantPayload,
   type RegisterUserPayload,
+  type AuthTokens,
+  type AuthUser,
 } from '@org/api-client';
 
-export interface AuthUser {
-  id: string | number;
-  name: string;
-  email: string;
-  roles?: string[];
-  permissions?: string[];
-  tenant_id?: string | null;
-  tenant_type?: 'merchant' | 'service_provider' | 'both' | null;
-}
+export type { AuthUser };
 
 interface AuthState {
   user: AuthUser | null;
@@ -36,15 +30,11 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
-    setSession(tokens: {
-      access_token: string;
-      refresh_token?: string;
-      user?: Record<string, unknown>;
-    }) {
+    setSession(tokens: AuthTokens) {
       tokenStore.setAccessToken(tokens.access_token);
       if (tokens.refresh_token) tokenStore.setRefreshToken(tokens.refresh_token);
       if (tokens.user) {
-        this.user = tokens.user as unknown as AuthUser;
+        this.user = tokens.user;
         if (this.user.tenant_id) tokenStore.setTenantId(String(this.user.tenant_id));
       }
     },

@@ -16,6 +16,7 @@
     }
   },
   "dependencies": {
+    "@org/types": "*",
     "axios": "^1.19.0"
   }
 }

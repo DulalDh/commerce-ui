@@ -1,9 +1,10 @@
 import { api } from '../http';
+import type { SearchResult, MarketplaceQueueItem } from '@org/types';
 
 export const marketplaceService = {
   search: (params: { q: string; type?: 'product' | 'service'; page?: number }) =>
-    api.get('/search', { params }),
-  queue: (params?: Record<string, unknown>) => api.get('/admin/marketplace/queue', { params }),
+    api.get<SearchResult[]>('/search', { params }),
+  queue: (params?: Record<string, unknown>) => api.get<MarketplaceQueueItem[]>('/admin/marketplace/queue', { params }),
   approveListing: (productId: string | number) =>
     api.put(`/admin/marketplace/queue/${productId}/approve`),
   rejectListing: (productId: string | number, reason?: string) =>
