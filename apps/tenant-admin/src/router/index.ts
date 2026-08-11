@@ -91,6 +91,30 @@ const router = createRouter({
       component: () => import('../views/customers/CustomerDetailView.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/subscriptions',
+      name: 'subscriptions',
+      component: () => import('../views/subscriptions/SubscriptionsView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/promotions/coupons',
+      name: 'promotions-coupons',
+      component: () => import('../views/promotions/CouponsView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/promotions/flash-sales',
+      name: 'promotions-flash-sales',
+      component: () => import('../views/promotions/FlashSalesView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/promotions/rules',
+      name: 'promotions-rules',
+      component: () => import('../views/promotions/PromotionRulesView.vue'),
+      meta: { requiresAuth: true },
+    },
   ],
 });
 

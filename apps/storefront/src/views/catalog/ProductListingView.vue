@@ -2,7 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { productsService, categoriesService } from '@org/api-client';
-import { Card, Select } from '@org/ui';
+import { Card, Select, Badge } from '@org/ui';
 
 interface Product {
   id: string | number;
@@ -10,6 +10,7 @@ interface Product {
   slug: string;
   price: number;
   images?: { url: string }[];
+  flash_sale_discount_percentage?: number;
 }
 
 interface Category {
@@ -64,7 +65,10 @@ onMounted(load);
 
     <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
       <RouterLink v-for="product in products" :key="product.id" :to="`/products/${product.slug}`">
-        <Card :padded="false" class="overflow-hidden">
+        <Card :padded="false" class="relative overflow-hidden">
+          <Badge v-if="product.flash_sale_discount_percentage" variant="danger" class="absolute left-2 top-2 z-10">
+            -{{ product.flash_sale_discount_percentage }}%
+          </Badge>
           <img
             v-if="product.images?.[0]"
             :src="product.images[0].url"

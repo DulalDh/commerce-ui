@@ -12,6 +12,36 @@ const router = createRouter({
       component: () => import('../views/DashboardView.vue'),
       meta: { requiresAuth: true, roles: ['super-admin'] },
     },
+    {
+      path: '/merchants',
+      name: 'merchants',
+      component: () => import('../views/merchants/MerchantsView.vue'),
+      meta: { requiresAuth: true, roles: ['super-admin'] },
+    },
+    {
+      path: '/marketplace/queue',
+      name: 'marketplace-queue',
+      component: () => import('../views/marketplace/MarketplaceQueueView.vue'),
+      meta: { requiresAuth: true, roles: ['super-admin'] },
+    },
+    {
+      path: '/plans',
+      name: 'plans',
+      component: () => import('../views/plans/PlansView.vue'),
+      meta: { requiresAuth: true, roles: ['super-admin'] },
+    },
+    {
+      path: '/rbac/roles',
+      name: 'rbac-roles',
+      component: () => import('../views/rbac/RolesView.vue'),
+      meta: { requiresAuth: true, roles: ['super-admin'] },
+    },
+    {
+      path: '/rbac/permissions',
+      name: 'rbac-permissions',
+      component: () => import('../views/rbac/PermissionsView.vue'),
+      meta: { requiresAuth: true, roles: ['super-admin'] },
+    },
   ],
 });
 

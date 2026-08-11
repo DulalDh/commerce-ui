@@ -18,6 +18,11 @@ const router = createRouter({
       component: () => import('../views/catalog/ProductDetailView.vue'),
     },
     {
+      path: '/search',
+      name: 'search',
+      component: () => import('../views/search/SearchView.vue'),
+    },
+    {
       path: '/checkout',
       name: 'checkout',
       component: () => import('../views/checkout/CheckoutView.vue'),

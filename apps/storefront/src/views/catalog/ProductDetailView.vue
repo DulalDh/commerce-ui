@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { productsService, ApiError } from '@org/api-client';
-import { Card, Button, ImagePreview, Select } from '@org/ui';
+import { Card, Button, ImagePreview, Select, Badge } from '@org/ui';
 import { useCartStore } from '../../stores/cart';
 
 interface Variant {
@@ -18,6 +18,7 @@ interface Product {
   description?: string;
   images?: { url: string }[];
   variants?: Variant[];
+  flash_sale_discount_percentage?: number;
 }
 
 const route = useRoute();
@@ -70,7 +71,12 @@ onMounted(load);
     </div>
 
     <Card>
-      <h1 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">{{ product.name }}</h1>
+      <div class="flex items-center gap-2">
+        <h1 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">{{ product.name }}</h1>
+        <Badge v-if="product.flash_sale_discount_percentage" variant="danger">
+          -{{ product.flash_sale_discount_percentage }}% flash sale
+        </Badge>
+      </div>
       <p class="mt-2 text-lg text-neutral-700 dark:text-neutral-200">${{ product.price }}</p>
       <p v-if="product.description" class="mt-3 text-sm text-neutral-600 dark:text-neutral-300">
         {{ product.description }}

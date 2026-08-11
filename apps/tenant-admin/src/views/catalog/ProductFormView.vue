@@ -17,6 +17,7 @@ import {
   Checkbox,
   Button,
   ImageUpload,
+  Badge,
 } from '@org/ui';
 
 interface Option {
@@ -83,6 +84,10 @@ async function loadOptions() {
   tagOptions.value = (tags as unknown as { id: string; name: string }[]).map((t) => ({ label: t.name, value: t.id }));
 }
 
+const marketplaceStatus = ref<string | null>(null);
+const publishing = ref(false);
+const publishError = ref('');
+
 async function loadProduct() {
   if (!productId.value) return;
   const product = await productsService.get(productId.value) as unknown as {
@@ -95,6 +100,7 @@ async function loadProduct() {
     tags?: { id: string | number }[];
     images?: { id: string; url: string }[];
     variants?: Variant[];
+    marketplace_status?: string;
   };
   form.name = product.name;
   form.slug = product.slug;
@@ -105,6 +111,21 @@ async function loadProduct() {
   selectedTagIds.value = new Set((product.tags ?? []).map((t) => t.id));
   images.value = (product.images ?? []).map((img) => ({ id: String(img.id), url: img.url }));
   variants.value = product.variants ?? [];
+  marketplaceStatus.value = product.marketplace_status ?? null;
+}
+
+async function onPublishToMarketplace() {
+  if (!productId.value) return;
+  publishError.value = '';
+  publishing.value = true;
+  try {
+    await productsService.publishToMarketplace(productId.value);
+    marketplaceStatus.value = 'pending';
+  } catch (err) {
+    publishError.value = err instanceof ApiError ? err.message : 'Failed to submit for marketplace';
+  } finally {
+    publishing.value = false;
+  }
 }
 
 async function onSubmit() {
@@ -227,6 +248,25 @@ onMounted(async () => {
           <Button variant="secondary" @click="onAddVariant">Add variant</Button>
         </div>
       </div>
+    </Card>
+
+    <Card v-if="productId" title="Marketplace">
+      <div class="flex items-center gap-3">
+        <Badge v-if="marketplaceStatus" :variant="marketplaceStatus === 'approved' ? 'success' : 'warning'">
+          {{ marketplaceStatus }}
+        </Badge>
+        <span v-else class="text-sm text-neutral-500">Not submitted to the marketplace.</span>
+        <Button
+          v-if="!marketplaceStatus || marketplaceStatus === 'rejected'"
+          size="sm"
+          variant="secondary"
+          :loading="publishing"
+          @click="onPublishToMarketplace"
+        >
+          Submit to marketplace
+        </Button>
+      </div>
+      <p v-if="publishError" class="mt-2 text-sm text-danger-600">{{ publishError }}</p>
     </Card>
   </div>
 </template>

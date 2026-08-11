@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { ordersService, ApiError } from '@org/api-client';
+import { ordersService, shippingService, ApiError } from '@org/api-client';
 import { Card, Badge, Select, TextInput, Button, Table, type TableColumn } from '@org/ui';
 
 interface OrderItem {
@@ -48,6 +48,29 @@ const shipment = reactive({ provider: 'pathao' });
 const creatingShipment = ref(false);
 const shipmentError = ref('');
 const shipmentCreated = ref(false);
+
+const shippingRate = ref<number | null>(null);
+const rateError = ref('');
+const calculatingRate = ref(false);
+
+async function onCalculateRate() {
+  if (!order.value?.shipping_address?.city) return;
+  rateError.value = '';
+  calculatingRate.value = true;
+  try {
+    const result = (await shippingService.calculateRate({
+      provider: shipment.provider,
+      origin: 'Dhaka',
+      destination: order.value.shipping_address.city,
+      weight_kg: 1,
+    })) as unknown as { rate?: number; amount?: number };
+    shippingRate.value = result.rate ?? result.amount ?? null;
+  } catch (err) {
+    rateError.value = err instanceof ApiError ? err.message : 'Failed to calculate rate';
+  } finally {
+    calculatingRate.value = false;
+  }
+}
 
 async function load() {
   loading.value = true;
@@ -126,6 +149,13 @@ onMounted(load);
           label="Carrier"
           :options="[{ label: 'Pathao', value: 'pathao' }]"
         />
+        <Button type="button" variant="secondary" :loading="calculatingRate" class="w-fit" @click="onCalculateRate">
+          Estimate rate
+        </Button>
+        <p v-if="rateError" class="text-sm text-danger-600">{{ rateError }}</p>
+        <p v-else-if="shippingRate !== null" class="text-sm text-neutral-600 dark:text-neutral-300">
+          Estimated rate: ${{ shippingRate.toFixed(2) }}
+        </p>
         <p v-if="shipmentError" class="text-sm text-danger-600">{{ shipmentError }}</p>
         <p v-if="shipmentCreated" class="text-sm text-success-600">Shipment created.</p>
         <Button type="submit" :loading="creatingShipment" class="w-fit">Create shipment</Button>
