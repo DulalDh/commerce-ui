@@ -7,7 +7,7 @@ export const customersService = {
     api.post(`/customers/${customerId}/notes`, payload),
   listNotes: (customerId: string | number) => api.get(`/customers/${customerId}/notes`),
   syncTags: (customerId: string | number, tagIds: (string | number)[]) =>
-    api.put(`/customers/${customerId}/tags`, { tags: tagIds }),
+    api.put(`/customers/${customerId}/tags`, { tag_ids: tagIds }),
 };
 
 export const accountService = {

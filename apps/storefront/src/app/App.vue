@@ -4,13 +4,21 @@ import { RouterLink, RouterView } from 'vue-router';
 import { storefrontMenu, filterMenu, type MenuItem } from '@org/config';
 import { useAuthStore, usePermission } from '@org/auth';
 import { useTheme } from '@org/theme';
-import { Button } from '@org/ui';
+import { Button, Badge } from '@org/ui';
+import { useCartStore } from '../stores/cart';
+import CartDrawer from './CartDrawer.vue';
 
 const auth = useAuthStore();
+const cart = useCartStore();
 const { can } = usePermission();
 const { mode, toggleMode } = useTheme();
 
-const menu = computed<MenuItem[]>(() => filterMenu(storefrontMenu as MenuItem[], { can }));
+const menu = computed<MenuItem[]>(() =>
+  filterMenu(
+    (storefrontMenu as MenuItem[]).filter((item) => item.id !== 'cart'),
+    { can },
+  ),
+);
 </script>
 
 <template>
@@ -29,6 +37,10 @@ const menu = computed<MenuItem[]>(() => filterMenu(storefrontMenu as MenuItem[],
           <Button variant="ghost" size="sm" @click="toggleMode">
             {{ mode === 'dark' ? '☀️' : '🌙' }}
           </Button>
+          <button class="relative flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-300" @click="cart.openDrawer">
+            🛒
+            <Badge v-if="cart.itemCount" variant="primary">{{ cart.itemCount }}</Badge>
+          </button>
           <RouterLink v-if="!auth.isAuthenticated" to="/login" class="text-sm font-medium text-primary-600">
             Sign in
           </RouterLink>
@@ -39,5 +51,6 @@ const menu = computed<MenuItem[]>(() => filterMenu(storefrontMenu as MenuItem[],
     <main class="mx-auto max-w-5xl px-4 py-6">
       <RouterView />
     </main>
+    <CartDrawer />
   </div>
 </template>
