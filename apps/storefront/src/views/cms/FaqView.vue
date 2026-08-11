@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { cmsPublicService } from '@org/api-client';
+import { cmsPublicService, ApiError } from '@org/api-client';
 import { Card } from '@org/ui';
 
 interface Faq {
@@ -11,6 +11,7 @@ interface Faq {
 
 const faqs = ref<Faq[]>([]);
 const loading = ref(true);
+const error = ref('');
 const openId = ref<string | number | null>(null);
 
 function toggle(faq: Faq) {
@@ -19,8 +20,11 @@ function toggle(faq: Faq) {
 
 onMounted(async () => {
   loading.value = true;
+  error.value = '';
   try {
     faqs.value = await cmsPublicService.faqs();
+  } catch (err) {
+    error.value = err instanceof ApiError ? err.message : 'Failed to load FAQs';
   } finally {
     loading.value = false;
   }
@@ -30,6 +34,7 @@ onMounted(async () => {
 <template>
   <Card title="Frequently Asked Questions">
     <p v-if="loading" class="text-sm text-neutral-500">Loading…</p>
+    <p v-else-if="error" class="text-sm text-danger-600">{{ error }}</p>
     <p v-else-if="!faqs.length" class="text-sm text-neutral-500">No FAQs yet.</p>
     <div v-else class="flex flex-col divide-y divide-neutral-200 dark:divide-neutral-700">
       <div v-for="faq in faqs" :key="faq.id" class="py-3">

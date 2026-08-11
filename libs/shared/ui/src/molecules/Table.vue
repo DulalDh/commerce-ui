@@ -44,6 +44,22 @@ function toggleSort(col: TableColumn) {
   if (!col.sortable) return;
   emit('sort', col.key);
 }
+
+function ariaSort(col: TableColumn): 'ascending' | 'descending' | 'none' {
+  if (!col.sortable || props.sortKey !== col.key) return 'none';
+  return props.sortDir === 'asc' ? 'ascending' : 'descending';
+}
+
+function onRowClick(row: Record<string, unknown>) {
+  emit('row-click', row);
+}
+
+function onRowKeydown(event: KeyboardEvent, row: Record<string, unknown>) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    emit('row-click', row);
+  }
+}
 </script>
 
 <template>
@@ -55,11 +71,18 @@ function toggleSort(col: TableColumn) {
             v-for="col in columns"
             :key="col.key"
             class="px-4 py-2.5 font-medium text-neutral-600 dark:text-neutral-300"
-            :class="col.sortable ? 'cursor-pointer select-none' : ''"
-            @click="toggleSort(col)"
+            :aria-sort="ariaSort(col)"
           >
-            {{ col.label }}
-            <span v-if="sortKey === col.key">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+            <button
+              v-if="col.sortable"
+              type="button"
+              class="inline-flex items-center gap-1 font-medium"
+              @click="toggleSort(col)"
+            >
+              {{ col.label }}
+              <span v-if="sortKey === col.key" aria-hidden="true">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+            </button>
+            <template v-else>{{ col.label }}</template>
           </th>
         </tr>
       </thead>
@@ -78,8 +101,11 @@ function toggleSort(col: TableColumn) {
           v-for="row in rows"
           v-else
           :key="String(row[rowKey])"
-          class="cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700/40"
-          @click="emit('row-click', row)"
+          class="cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-500"
+          tabindex="0"
+          role="button"
+          @click="onRowClick(row)"
+          @keydown="onRowKeydown($event, row)"
         >
           <td v-for="col in columns" :key="col.key" class="px-4 py-2.5 text-neutral-800 dark:text-neutral-100">
             <slot :name="`cell-${col.key}`" :row="row">

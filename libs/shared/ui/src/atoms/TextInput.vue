@@ -32,6 +32,7 @@ const classes = computed(() => inputClasses(!!props.error));
     :hint="hint"
     :required="required"
     :input-id="inputId"
+    v-slot="{ descriptionId }"
   >
     <input
       :id="inputId"
@@ -39,6 +40,9 @@ const classes = computed(() => inputClasses(!!props.error));
       :value="modelValue ?? ''"
       :placeholder="placeholder"
       :disabled="disabled"
+      :required="required"
+      :aria-invalid="!!error"
+      :aria-describedby="descriptionId"
       :class="classes"
       @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />

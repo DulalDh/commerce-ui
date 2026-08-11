@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { productsService, categoriesService } from '@org/api-client';
+import { productsService, categoriesService, ApiError } from '@org/api-client';
 import { Card, Select, Badge } from '@org/ui';
 
 interface Product {
@@ -24,6 +24,7 @@ const router = useRouter();
 const products = ref<Product[]>([]);
 const categories = ref<Category[]>([]);
 const loading = ref(true);
+const error = ref('');
 
 const categoryId = ref((route.query.category_id as string) ?? '');
 const categoryOptions = computed(() => [
@@ -33,6 +34,7 @@ const categoryOptions = computed(() => [
 
 async function load() {
   loading.value = true;
+  error.value = '';
   try {
     const [productList, categoryList] = await Promise.all([
       productsService.list(categoryId.value ? { category_id: categoryId.value } : undefined),
@@ -40,6 +42,8 @@ async function load() {
     ]);
     products.value = productList;
     categories.value = categoryList as Category[];
+  } catch (err) {
+    error.value = err instanceof ApiError ? err.message : 'Failed to load products';
   } finally {
     loading.value = false;
   }
@@ -61,6 +65,7 @@ onMounted(load);
     </div>
 
     <p v-if="loading" class="text-sm text-neutral-500">Loading…</p>
+    <p v-else-if="error" class="text-sm text-danger-600">{{ error }}</p>
     <p v-else-if="!products.length" class="text-sm text-neutral-500">No products found.</p>
 
     <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -73,6 +78,8 @@ onMounted(load);
             v-if="product.images?.[0]"
             :src="product.images[0].url"
             :alt="product.name"
+            loading="lazy"
+            decoding="async"
             class="h-40 w-full object-cover"
           />
           <div v-else class="flex h-40 w-full items-center justify-center bg-neutral-100 text-neutral-400 dark:bg-neutral-700">

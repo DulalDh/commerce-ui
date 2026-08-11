@@ -35,8 +35,9 @@ export default defineConfig(() => ({
       formats: ['es' as const],
     },
     rolldownOptions: {
-      // External packages that should not be bundled into your library.
-      external: [],
+      // Must not bundle axios — a bundled-in copy would carry its own
+      // interceptor state, separate from the app's shared http instance.
+      external: [/^axios$/],
     },
   },
   test: {

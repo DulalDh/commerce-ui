@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useId } from 'vue';
+
 withDefaults(
   defineProps<{
     modelValue: boolean;
@@ -11,14 +13,27 @@ withDefaults(
 
 const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>();
 
+const titleId = useId();
+
 function close() {
   emit('update:modelValue', false);
+}
+
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape') close();
 }
 </script>
 
 <template>
   <Teleport to="body">
-    <div v-if="modelValue" class="fixed inset-0 z-50">
+    <div
+      v-if="modelValue"
+      class="fixed inset-0 z-50"
+      role="dialog"
+      aria-modal="true"
+      :aria-labelledby="title ? titleId : undefined"
+      @keydown="onKeydown"
+    >
       <div class="absolute inset-0 bg-black/50" @click="close" />
       <div
         class="absolute inset-y-0 flex w-full flex-col bg-white shadow-xl dark:bg-neutral-800"
@@ -29,12 +44,13 @@ function close() {
           class="flex items-center justify-between border-b border-neutral-200 px-4 py-3 dark:border-neutral-700"
         >
           <slot name="header">
-            <h3 class="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+            <h3 :id="titleId" class="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
               {{ title }}
             </h3>
           </slot>
           <button
             type="button"
+            aria-label="Close"
             class="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
             @click="close"
           >

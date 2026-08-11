@@ -36,6 +36,7 @@ function onInput(event: Event) {
     :hint="hint"
     :required="required"
     :input-id="inputId"
+    v-slot="{ descriptionId }"
   >
     <input
       :id="inputId"
@@ -43,9 +44,12 @@ function onInput(event: Event) {
       :value="modelValue ?? ''"
       :placeholder="placeholder"
       :disabled="disabled"
+      :required="required"
       :min="min"
       :max="max"
       :step="step"
+      :aria-invalid="!!error"
+      :aria-describedby="descriptionId"
       :class="classes"
       @input="onInput"
     />

@@ -1,11 +1,13 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   label?: string;
   error?: string;
   hint?: string;
   required?: boolean;
   inputId: string;
 }>();
+
+const descriptionId = `${props.inputId}-description`;
 </script>
 
 <template>
@@ -18,11 +20,11 @@ defineProps<{
       {{ label }}
       <span v-if="required" class="text-danger-500">*</span>
     </label>
-    <slot />
-    <p v-if="error" class="text-xs text-danger-600 dark:text-danger-500">
+    <slot :description-id="error || hint ? descriptionId : undefined" />
+    <p v-if="error" :id="descriptionId" role="alert" class="text-xs text-danger-600 dark:text-danger-500">
       {{ error }}
     </p>
-    <p v-else-if="hint" class="text-xs text-neutral-500 dark:text-neutral-400">
+    <p v-else-if="hint" :id="descriptionId" class="text-xs text-neutral-500 dark:text-neutral-400">
       {{ hint }}
     </p>
   </div>

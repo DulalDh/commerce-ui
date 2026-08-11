@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { notificationsService } from '@org/api-client';
+import { notificationsService, ApiError } from '@org/api-client';
 import { Badge, SidePanel } from '@org/ui';
 
 interface Notification {
@@ -14,13 +14,17 @@ interface Notification {
 const notifications = ref<Notification[]>([]);
 const open = ref(false);
 const loading = ref(false);
+const error = ref('');
 
 const unreadCount = computed(() => notifications.value.filter((n) => !n.read_at).length);
 
 async function load() {
   loading.value = true;
+  error.value = '';
   try {
     notifications.value = await notificationsService.list();
+  } catch (err) {
+    error.value = err instanceof ApiError ? err.message : 'Failed to load notifications';
   } finally {
     loading.value = false;
   }
@@ -41,13 +45,18 @@ onMounted(load);
 </script>
 
 <template>
-  <button class="relative flex items-center gap-1 text-sm text-neutral-600 dark:text-neutral-300" @click="toggle">
+  <button
+    class="relative flex items-center gap-1 text-sm text-neutral-600 dark:text-neutral-300"
+    aria-label="Notifications"
+    @click="toggle"
+  >
     🔔
     <Badge v-if="unreadCount" variant="danger">{{ unreadCount }}</Badge>
   </button>
 
   <SidePanel v-model="open" title="Notifications">
     <p v-if="loading" class="text-sm text-neutral-500">Loading…</p>
+    <p v-else-if="error" class="text-sm text-danger-600">{{ error }}</p>
     <p v-else-if="!notifications.length" class="text-sm text-neutral-500">No notifications yet.</p>
     <div v-else class="flex flex-col gap-2">
       <button

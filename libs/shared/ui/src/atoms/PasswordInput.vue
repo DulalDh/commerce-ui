@@ -29,6 +29,7 @@ const classes = computed(() => inputClasses(!!props.error));
     :hint="hint"
     :required="required"
     :input-id="inputId"
+    v-slot="{ descriptionId }"
   >
     <div class="relative">
       <input
@@ -37,12 +38,16 @@ const classes = computed(() => inputClasses(!!props.error));
         :value="modelValue"
         :placeholder="placeholder"
         :disabled="disabled"
+        :required="required"
+        :aria-invalid="!!error"
+        :aria-describedby="descriptionId"
         :class="[classes, 'pr-16']"
         @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
       />
       <button
         type="button"
         class="absolute inset-y-0 right-2 text-xs font-medium text-primary-600 dark:text-primary-400"
+        :aria-label="visible ? 'Hide password' : 'Show password'"
         @click="visible = !visible"
       >
         {{ visible ? 'Hide' : 'Show' }}

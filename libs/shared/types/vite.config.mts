@@ -35,7 +35,7 @@ export default defineConfig(() => ({
       formats: ['es' as const],
     },
     rolldownOptions: {
-      // External packages that should not be bundled into your library.
+      // Type-only package — nothing to externalize.
       external: [],
     },
   },

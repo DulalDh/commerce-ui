@@ -35,8 +35,9 @@ export default defineConfig(() => ({
       formats: ['es' as const],
     },
     rolldownOptions: {
-      // External packages that should not be bundled into your library.
-      external: [],
+      // @org/ui is only imported for its ChartPoint type — external anyway
+      // so it can't pull a duplicate Vue-dependent bundle in transitively.
+      external: [/^@org\//],
     },
   },
   test: {

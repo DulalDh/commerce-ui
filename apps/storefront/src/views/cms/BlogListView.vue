@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { cmsPublicService } from '@org/api-client';
+import { cmsPublicService, ApiError } from '@org/api-client';
 import { Card } from '@org/ui';
 
 interface BlogPost {
@@ -13,11 +13,15 @@ interface BlogPost {
 
 const posts = ref<BlogPost[]>([]);
 const loading = ref(true);
+const error = ref('');
 
 onMounted(async () => {
   loading.value = true;
+  error.value = '';
   try {
     posts.value = await cmsPublicService.blogPosts();
+  } catch (err) {
+    error.value = err instanceof ApiError ? err.message : 'Failed to load posts';
   } finally {
     loading.value = false;
   }
@@ -28,6 +32,7 @@ onMounted(async () => {
   <div class="flex flex-col gap-4">
     <h2 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">Blog</h2>
     <p v-if="loading" class="text-sm text-neutral-500">Loading…</p>
+    <p v-else-if="error" class="text-sm text-danger-600">{{ error }}</p>
     <p v-else-if="!posts.length" class="text-sm text-neutral-500">No posts yet.</p>
     <div class="flex flex-col gap-3">
       <RouterLink v-for="post in posts" :key="post.id" :to="`/blog/${post.slug}`">

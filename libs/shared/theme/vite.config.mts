@@ -35,8 +35,9 @@ export default defineConfig(() => ({
       formats: ['es' as const],
     },
     rolldownOptions: {
-      // External packages that should not be bundled into your library.
-      external: [],
+      // Must not bundle vue — useTheme() shares reactive state via Vue's
+      // module-level reactivity system, which requires a single Vue instance.
+      external: [/^vue$/],
     },
   },
   test: {

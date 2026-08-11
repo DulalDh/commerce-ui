@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { notificationsService } from '@org/api-client';
+import { notificationsService, ApiError } from '@org/api-client';
 import { Card, Badge } from '@org/ui';
 
 interface Notification {
@@ -13,11 +13,15 @@ interface Notification {
 
 const notifications = ref<Notification[]>([]);
 const loading = ref(true);
+const error = ref('');
 
 async function load() {
   loading.value = true;
+  error.value = '';
   try {
     notifications.value = await notificationsService.list();
+  } catch (err) {
+    error.value = err instanceof ApiError ? err.message : 'Failed to load notifications';
   } finally {
     loading.value = false;
   }
@@ -35,6 +39,7 @@ onMounted(load);
 <template>
   <Card title="Notifications">
     <p v-if="loading" class="text-sm text-neutral-500">Loading…</p>
+    <p v-else-if="error" class="text-sm text-danger-600">{{ error }}</p>
     <p v-else-if="!notifications.length" class="text-sm text-neutral-500">No notifications yet.</p>
     <div v-else class="flex flex-col gap-2">
       <button

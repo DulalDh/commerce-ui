@@ -32,13 +32,17 @@ const classes = computed(() => inputClasses(!!props.error));
     :hint="hint"
     :required="required"
     :input-id="inputId"
+    v-slot="{ descriptionId }"
   >
     <textarea
       :id="inputId"
       :value="modelValue"
       :placeholder="placeholder"
       :disabled="disabled"
+      :required="required"
       :rows="rows"
+      :aria-invalid="!!error"
+      :aria-describedby="descriptionId"
       :class="classes"
       @input="emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
     />

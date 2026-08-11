@@ -37,10 +37,14 @@ const menu = computed<MenuItem[]>(() =>
           </template>
         </nav>
         <div class="flex items-center gap-2">
-          <Button variant="ghost" size="sm" @click="toggleMode">
+          <Button variant="ghost" size="sm" :aria-label="mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'" @click="toggleMode">
             {{ mode === 'dark' ? '☀️' : '🌙' }}
           </Button>
-          <button class="relative flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-300" @click="cart.openDrawer">
+          <button
+            class="relative flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-300"
+            aria-label="Open cart"
+            @click="cart.openDrawer"
+          >
             🛒
             <Badge v-if="cart.itemCount" variant="primary">{{ cart.itemCount }}</Badge>
           </button>

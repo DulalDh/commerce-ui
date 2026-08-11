@@ -35,8 +35,11 @@ export default defineConfig(() => ({
       formats: ['es' as const],
     },
     rolldownOptions: {
-      // External packages that should not be bundled into your library.
-      external: [],
+      // Must not bundle these — the consuming app provides the single
+      // shared instance (Pinia's active-instance state is a module-level
+      // global; a bundled-in copy here would silently be a different
+      // instance from the app's, breaking useAuthStore()).
+      external: [/^vue$/, /^vue-router$/, /^pinia$/, /^@org\//],
     },
   },
   test: {

@@ -37,8 +37,9 @@ export default defineConfig(() => ({
       formats: ['es' as const],
     },
     rolldownOptions: {
-      // External packages that should not be bundled into your library.
-      external: [],
+      // Must not bundle vue — a duplicate copy breaks component instance
+      // checks and reactivity sharing with the consuming app.
+      external: [/^vue$/],
     },
   },
   test: {

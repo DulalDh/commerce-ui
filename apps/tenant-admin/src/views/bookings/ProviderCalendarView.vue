@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { providerCalendarService } from '@org/api-client';
+import { providerCalendarService, ApiError } from '@org/api-client';
 import { useAuthStore } from '@org/auth';
 import { Card, Button } from '@org/ui';
 
@@ -16,6 +16,7 @@ const tenantId = computed(() => auth.user?.tenant_id ?? '');
 const cursor = ref(new Date());
 const days = ref<CalendarDay[]>([]);
 const loading = ref(true);
+const error = ref('');
 
 const monthLabel = computed(() =>
   cursor.value.toLocaleDateString(undefined, { month: 'long', year: 'numeric' }),
@@ -39,6 +40,7 @@ const gridDays = computed(() => {
 async function load() {
   if (!tenantId.value) return;
   loading.value = true;
+  error.value = '';
   try {
     const year = cursor.value.getFullYear();
     const month = cursor.value.getMonth() + 1;
@@ -46,6 +48,8 @@ async function load() {
       | CalendarDay[]
       | { days: CalendarDay[] };
     days.value = Array.isArray(result) ? result : (result.days ?? []);
+  } catch (err) {
+    error.value = err instanceof ApiError ? err.message : 'Failed to load calendar';
   } finally {
     loading.value = false;
   }
@@ -77,6 +81,7 @@ onMounted(load);
     </template>
 
     <p v-if="loading" class="text-sm text-neutral-500">Loading…</p>
+    <p v-else-if="error" class="text-sm text-danger-600">{{ error }}</p>
     <div v-else class="grid grid-cols-7 gap-1 text-center text-xs">
       <div v-for="d in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']" :key="d" class="py-1 font-medium text-neutral-500">
         {{ d }}
