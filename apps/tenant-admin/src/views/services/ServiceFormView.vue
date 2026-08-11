@@ -78,7 +78,7 @@ async function onSubmit() {
       name: form.name,
       slug: form.slug,
       description: form.description,
-      service_category_id: form.service_category_id,
+      service_category_id: form.service_category_id || null,
       pricing_model: form.pricing_model,
       price: form.price,
       duration_minutes: form.duration_minutes,
@@ -94,7 +94,12 @@ async function onSubmit() {
     }
     router.push('/services/listings');
   } catch (err) {
-    error.value = err instanceof ApiError ? err.message : 'Failed to save service';
+    if (err instanceof ApiError) {
+      const fieldErrors = err.errors ? Object.values(err.errors).flat().join(' ') : '';
+      error.value = fieldErrors || err.message;
+    } else {
+      error.value = 'Failed to save service';
+    }
   } finally {
     saving.value = false;
   }

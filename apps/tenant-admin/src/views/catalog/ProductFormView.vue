@@ -136,8 +136,8 @@ async function onSubmit() {
       name: form.name,
       slug: form.slug,
       price: form.price,
-      category_id: form.category_id,
-      brand_id: form.brand_id,
+      category_id: form.category_id || null,
+      brand_id: form.brand_id || null,
       status: form.status,
       tag_ids: Array.from(selectedTagIds.value),
     };
@@ -157,7 +157,12 @@ async function onSubmit() {
 
     router.push('/catalog/products');
   } catch (err) {
-    error.value = err instanceof ApiError ? err.message : 'Failed to save product';
+    if (err instanceof ApiError) {
+      const fieldErrors = err.errors ? Object.values(err.errors).flat().join(' ') : '';
+      error.value = fieldErrors || err.message;
+    } else {
+      error.value = 'Failed to save product';
+    }
   } finally {
     saving.value = false;
   }
