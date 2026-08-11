@@ -1,1 +1,1 @@
-export * from './lib/utils.js';
+export { normalizeChartData } from './normalizeChartData';

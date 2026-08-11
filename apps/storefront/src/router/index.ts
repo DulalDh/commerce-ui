@@ -44,6 +44,12 @@ const router = createRouter({
       component: () => import('../views/checkout/PaymentView.vue'),
     },
     {
+      path: '/account',
+      name: 'account-dashboard',
+      component: () => import('../views/account/AccountDashboardView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/account/orders',
       name: 'account-orders',
       component: () => import('../views/account/AccountOrdersView.vue'),
@@ -54,6 +60,26 @@ const router = createRouter({
       name: 'account-bookings',
       component: () => import('../views/account/AccountBookingsView.vue'),
       meta: { requiresAuth: true },
+    },
+    {
+      path: '/blog',
+      name: 'blog',
+      component: () => import('../views/cms/BlogListView.vue'),
+    },
+    {
+      path: '/blog/:slug',
+      name: 'blog-detail',
+      component: () => import('../views/cms/BlogDetailView.vue'),
+    },
+    {
+      path: '/faq',
+      name: 'faq',
+      component: () => import('../views/cms/FaqView.vue'),
+    },
+    {
+      path: '/pages/:slug',
+      name: 'cms-page',
+      component: () => import('../views/cms/PageView.vue'),
     },
   ],
 });

@@ -25,3 +25,5 @@ export { default as ImageUpload } from './molecules/ImageUpload.vue';
 export type { UploadedImage } from './molecules/ImageUpload.vue';
 export { default as ImagePreview } from './molecules/ImagePreview.vue';
 export { default as FormField } from './molecules/FormField.vue';
+export { default as BarChart } from './molecules/BarChart.vue';
+export type { ChartPoint } from './molecules/BarChart.vue';

@@ -31,6 +31,42 @@ const router = createRouter({
       meta: { requiresAuth: true, roles: ['super-admin'] },
     },
     {
+      path: '/cms/pages',
+      name: 'cms-pages',
+      component: () => import('../views/cms/PagesListView.vue'),
+      meta: { requiresAuth: true, roles: ['super-admin'] },
+    },
+    {
+      path: '/cms/pages/:id',
+      name: 'cms-page-form',
+      component: () => import('../views/cms/PageFormView.vue'),
+      meta: { requiresAuth: true, roles: ['super-admin'] },
+    },
+    {
+      path: '/cms/blog',
+      name: 'cms-blog',
+      component: () => import('../views/cms/BlogPostsView.vue'),
+      meta: { requiresAuth: true, roles: ['super-admin'] },
+    },
+    {
+      path: '/cms/faqs',
+      name: 'cms-faqs',
+      component: () => import('../views/cms/FaqsView.vue'),
+      meta: { requiresAuth: true, roles: ['super-admin'] },
+    },
+    {
+      path: '/notification-templates',
+      name: 'notification-templates',
+      component: () => import('../views/notifications/NotificationTemplatesView.vue'),
+      meta: { requiresAuth: true, roles: ['super-admin'] },
+    },
+    {
+      path: '/reports',
+      name: 'reports',
+      component: () => import('../views/reports/ReportsView.vue'),
+      meta: { requiresAuth: true, roles: ['super-admin'] },
+    },
+    {
       path: '/rbac/roles',
       name: 'rbac-roles',
       component: () => import('../views/rbac/RolesView.vue'),

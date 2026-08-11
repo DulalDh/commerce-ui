@@ -7,6 +7,7 @@ import { useTheme } from '@org/theme';
 import { Button, Badge } from '@org/ui';
 import { useCartStore } from '../stores/cart';
 import CartDrawer from './CartDrawer.vue';
+import NotificationBell from './NotificationBell.vue';
 
 const auth = useAuthStore();
 const cart = useCartStore();
@@ -15,7 +16,9 @@ const { mode, toggleMode } = useTheme();
 
 const menu = computed<MenuItem[]>(() =>
   filterMenu(
-    (storefrontMenu as MenuItem[]).filter((item) => item.id !== 'cart'),
+    (storefrontMenu as MenuItem[]).filter(
+      (item) => item.id !== 'cart' && (item.id !== 'account' || auth.isAuthenticated),
+    ),
     { can },
   ),
 );
@@ -41,6 +44,7 @@ const menu = computed<MenuItem[]>(() =>
             🛒
             <Badge v-if="cart.itemCount" variant="primary">{{ cart.itemCount }}</Badge>
           </button>
+          <NotificationBell v-if="auth.isAuthenticated" />
           <RouterLink v-if="!auth.isAuthenticated" to="/login" class="text-sm font-medium text-primary-600">
             Sign in
           </RouterLink>

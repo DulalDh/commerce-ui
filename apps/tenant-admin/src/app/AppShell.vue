@@ -5,6 +5,7 @@ import { tenantAdminMenu, filterMenu, type MenuItem } from '@org/config';
 import { useAuthStore, usePermission } from '@org/auth';
 import { useTheme } from '@org/theme';
 import { Button } from '@org/ui';
+import NotificationBell from './NotificationBell.vue';
 
 const route = useRoute();
 const auth = useAuthStore();
@@ -66,6 +67,7 @@ function onLogout() {
           {{ auth.user?.name ?? 'Tenant Admin' }}
         </h1>
         <div class="flex items-center gap-3">
+          <NotificationBell />
           <Button variant="ghost" size="sm" @click="toggleMode">
             {{ mode === 'dark' ? '☀️ Light' : '🌙 Dark' }}
           </Button>

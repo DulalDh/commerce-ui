@@ -3,16 +3,8 @@
   { "id": "products", "label": "Shop", "route": "/products" },
   { "id": "services", "label": "Services", "route": "/services" },
   { "id": "search", "label": "Search", "route": "/search" },
+  { "id": "blog", "label": "Blog", "route": "/blog" },
+  { "id": "faq", "label": "FAQ", "route": "/faq" },
   { "id": "cart", "label": "Cart", "route": "/cart" },
-  {
-    "id": "account",
-    "label": "My Account",
-    "permission": "account.view",
-    "children": [
-      { "id": "account-orders", "label": "Orders", "route": "/account/orders" },
-      { "id": "account-bookings", "label": "Bookings", "route": "/account/bookings" },
-      { "id": "account-wallet", "label": "Wallet", "route": "/account/wallet" },
-      { "id": "account-loyalty", "label": "Loyalty", "route": "/account/loyalty" }
-    ]
-  }
+  { "id": "account", "label": "My Account", "route": "/account" }
 ]
