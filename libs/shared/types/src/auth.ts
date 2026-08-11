@@ -26,8 +26,7 @@ export interface RegisterUserPayload {
 }
 
 export interface AuthTokens {
-  access_token: string;
-  refresh_token?: string;
-  token_type?: string;
+  /** Sanctum personal access token ("id|plaintext"); no refresh mechanism. */
+  token: string;
   user?: AuthUser;
 }

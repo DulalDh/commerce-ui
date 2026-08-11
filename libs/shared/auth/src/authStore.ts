@@ -18,8 +18,11 @@ interface AuthState {
 }
 
 export const useAuthStore = defineStore('auth', {
+  // Rehydrates from localStorage so a hard reload doesn't bounce an
+  // otherwise-still-logged-in user back to the login screen — the access
+  // token alone isn't enough since `isAuthenticated` is derived from `user`.
   state: (): AuthState => ({
-    user: null,
+    user: tokenStore.getAccessToken() ? tokenStore.getUser<AuthUser>() : null,
     initialized: false,
   }),
 
@@ -31,10 +34,10 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     setSession(tokens: AuthTokens) {
-      tokenStore.setAccessToken(tokens.access_token);
-      if (tokens.refresh_token) tokenStore.setRefreshToken(tokens.refresh_token);
+      tokenStore.setAccessToken(tokens.token);
       if (tokens.user) {
         this.user = tokens.user;
+        tokenStore.setUser(this.user);
         if (this.user.tenant_id) tokenStore.setTenantId(String(this.user.tenant_id));
       }
     },
@@ -76,7 +79,13 @@ export const useAuthStore = defineStore('auth', {
   },
 });
 
-/** Wires the axios 401 refresh flow to this store; call once at app bootstrap. */
+/**
+ * Wires the axios 401 refresh flow to this store; call once at app bootstrap.
+ * The current backend issues Sanctum personal access tokens with no refresh
+ * mechanism, so this only does anything if a future backend version starts
+ * returning a refresh token; today `getRefreshToken()` is always null and
+ * the handler is a no-op.
+ */
 export function registerAuthRefreshHandler(store: ReturnType<typeof useAuthStore>) {
   setRefreshHandler(async () => {
     const refreshToken = tokenStore.getRefreshToken();
@@ -84,7 +93,7 @@ export function registerAuthRefreshHandler(store: ReturnType<typeof useAuthStore
     try {
       const tokens = await authService.refresh(refreshToken);
       store.setSession(tokens);
-      return tokens.access_token;
+      return tokens.token;
     } catch {
       return null;
     }
