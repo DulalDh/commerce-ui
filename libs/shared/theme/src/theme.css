@@ -1,6 +1,11 @@
 /* Tailwind v4 token source — must mirror ./theme.js values. */
 @import 'tailwindcss';
 
+/* Tailwind v4's auto content-detection only walks each app's own directory
+   tree, so utility classes used exclusively inside shared libs (never
+   duplicated in app source) would otherwise never be generated. */
+@source '../../ui/src';
+
 @theme {
   --color-primary-50: #eff6ff;
   --color-primary-100: #dbeafe;
