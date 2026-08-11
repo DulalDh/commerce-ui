@@ -47,7 +47,7 @@ Each app is routing + layout composition only; all real UI and data-fetching log
 npm install
 ```
 
-Each app reads its API base URL from `apps/<app>/.env` (`VITE_API_BASE_URL`, defaults to `http://localhost:8000/api` — point it at a running instance of the Commerge backend).
+Each app reads its API base URL from `apps/<app>/.env` (`VITE_API_BASE_URL`, defaults to `http://127.0.0.1:8000/api/v1` — point it at a running instance of the Commerge backend).
 
 ### Run an app
 
