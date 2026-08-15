@@ -11,6 +11,8 @@ export const productsService = {
     api.post(`/products/${productId}/images`, payload),
   deleteImage: (productId: string | number, imageId: string | number) =>
     api.delete(`/products/${productId}/images/${imageId}`),
+  setPrimaryImage: (productId: string | number, imageId: string | number) =>
+    api.patch(`/products/${productId}/images/${imageId}/primary`, {}),
   addVariant: (productId: string | number, payload: Partial<ProductVariant>) =>
     api.post<ProductVariant>(`/products/${productId}/variants`, payload),
   deleteVariant: (productId: string | number, variantId: string | number) =>

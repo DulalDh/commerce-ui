@@ -43,6 +43,11 @@ http.interceptors.request.use((config) => {
     config.headers = config.headers ?? {};
     config.headers['X-Tenant-ID'] = tenantId;
   }
+  if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+    // Let the browser set multipart/form-data with the correct boundary —
+    // the instance's default JSON Content-Type would otherwise strip it.
+    delete config.headers['Content-Type'];
+  }
   return config;
 });
 
@@ -104,6 +109,8 @@ export const api = {
     http.post(url, data, config) as unknown as Promise<T>,
   put: <T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> =>
     http.put(url, data, config) as unknown as Promise<T>,
+  patch: <T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> =>
+    http.patch(url, data, config) as unknown as Promise<T>,
   delete: <T>(url: string, config?: AxiosRequestConfig): Promise<T> =>
     http.delete(url, config) as unknown as Promise<T>,
 };

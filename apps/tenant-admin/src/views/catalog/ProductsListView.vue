@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { productsService, ApiError } from '@org/api-client';
+import { getFeatureImageUrl, type ProductImage } from '@org/types';
 import { Card, Table, Button, Badge, type TableColumn } from '@org/ui';
 
 interface Product {
@@ -9,6 +10,7 @@ interface Product {
   name: string;
   price: number;
   status: string;
+  images?: ProductImage[];
 }
 
 const products = ref<Product[]>([]);
@@ -17,6 +19,7 @@ const listError = ref('');
 const router = useRouter();
 
 const columns: TableColumn[] = [
+  { key: 'image', label: '' },
   { key: 'name', label: 'Name' },
   { key: 'price', label: 'Price' },
   { key: 'status', label: 'Status' },
@@ -62,6 +65,15 @@ onMounted(load);
     <p v-if="listError" class="mb-3 text-sm text-danger-600">{{ listError }}</p>
 
     <Table :columns="columns" :rows="products as never" :loading="loading" row-key="id">
+      <template #cell-image="{ row }">
+        <img
+          :src="getFeatureImageUrl((row as Product).images, 'small')"
+          :alt="(row as Product).name"
+          loading="lazy"
+          decoding="async"
+          class="h-10 w-10 rounded object-cover"
+        />
+      </template>
       <template #cell-price="{ row }">${{ (row as Product).price }}</template>
       <template #cell-status="{ row }">
         <Badge :variant="statusVariant[(row as Product).status] ?? 'neutral'">

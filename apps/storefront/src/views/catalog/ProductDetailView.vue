@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { productsService, ApiError } from '@org/api-client';
+import { getFeatureImage, getImageVariant, type ProductImage } from '@org/types';
 import { Card, Button, ImagePreview, Select, Badge } from '@org/ui';
 import { useCartStore } from '../../stores/cart';
 
@@ -16,7 +17,7 @@ interface Product {
   name: string;
   price: number;
   description?: string;
-  images?: { url: string }[];
+  images?: ProductImage[];
   variants?: Variant[];
   flash_sale_discount_percentage?: number;
 }
@@ -29,6 +30,11 @@ const selectedVariantId = ref('');
 const adding = ref(false);
 const addError = ref('');
 const added = ref(false);
+
+const featureImage = computed(() => getFeatureImage(product.value?.images));
+const otherImages = computed(() =>
+  (product.value?.images ?? []).filter((img) => img.id !== featureImage.value?.id),
+);
 
 async function load() {
   loading.value = true;
@@ -65,9 +71,21 @@ onMounted(load);
 <template>
   <p v-if="loading" class="text-sm text-neutral-500">Loading…</p>
   <div v-else-if="product" class="grid grid-cols-1 gap-8 sm:grid-cols-2">
-    <div class="flex flex-wrap gap-2">
-      <ImagePreview v-for="(img, i) in product.images ?? []" :key="i" :src="img.url" class="h-40 w-40" />
-      <p v-if="!product.images?.length" class="text-sm text-neutral-500">No images</p>
+    <div class="flex flex-col gap-2">
+      <ImagePreview
+        v-if="featureImage"
+        :src="getImageVariant(featureImage, 'large')"
+        primary
+        size="lg"
+      />
+      <p v-else class="text-sm text-neutral-500">No images</p>
+      <div v-if="otherImages.length" class="flex flex-wrap gap-2">
+        <ImagePreview
+          v-for="img in otherImages"
+          :key="img.id"
+          :src="getImageVariant(img, 'thumbnail')"
+        />
+      </div>
     </div>
 
     <Card>

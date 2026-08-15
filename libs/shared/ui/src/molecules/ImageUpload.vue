@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import ImagePreview from './ImagePreview.vue';
 
 export interface UploadedImage {
   id: string;
   url: string;
   file?: File;
+  is_primary?: boolean;
 }
 
 const props = withDefaults(
@@ -22,18 +23,28 @@ const props = withDefaults(
 const emit = defineEmits<{
   'update:modelValue': [images: UploadedImage[]];
   files: [files: File[]];
+  remove: [image: UploadedImage];
+  'set-primary': [image: UploadedImage];
 }>();
 
 const dragOver = ref(false);
 const inputRef = ref<HTMLInputElement>();
 
+const featureImage = computed(
+  () => props.modelValue.find((img) => img.is_primary) ?? props.modelValue[0],
+);
+const otherImages = computed(() =>
+  props.modelValue.filter((img) => img.id !== featureImage.value?.id),
+);
+
 function addFiles(fileList: FileList | null) {
   if (!fileList) return;
   const files = Array.from(fileList);
-  const images: UploadedImage[] = files.map((file) => ({
+  const images: UploadedImage[] = files.map((file, index) => ({
     id: `${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2)}`,
     url: URL.createObjectURL(file),
     file,
+    is_primary: props.modelValue.length === 0 && index === 0,
   }));
   emit('update:modelValue', [...props.modelValue, ...images]);
   emit('files', files);
@@ -44,18 +55,49 @@ function onDrop(event: DragEvent) {
   addFiles(event.dataTransfer?.files ?? null);
 }
 
-function removeAt(index: number) {
-  const next = [...props.modelValue];
-  next.splice(index, 1);
+function removeImage(image: UploadedImage) {
+  const next = props.modelValue.filter((img) => img.id !== image.id);
+  if (image.is_primary && next.length) {
+    next[0].is_primary = true;
+  }
   emit('update:modelValue', next);
+  emit('remove', image);
+}
+
+function setPrimary(image: UploadedImage) {
+  const next = props.modelValue.map((img) => ({ ...img, is_primary: img.id === image.id }));
+  emit('update:modelValue', next);
+  emit('set-primary', image);
 }
 </script>
 
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="flex flex-col gap-3">
     <label v-if="label" class="text-sm font-medium text-neutral-700 dark:text-neutral-200">
       {{ label }}
     </label>
+
+    <div v-if="featureImage" class="flex flex-col gap-3 sm:flex-row sm:items-start">
+      <ImagePreview
+        :src="featureImage.url"
+        primary
+        removable
+        size="lg"
+        @remove="removeImage(featureImage)"
+      />
+      <div v-if="otherImages.length" class="flex flex-wrap gap-2">
+        <ImagePreview
+          v-for="img in otherImages"
+          :key="img.id"
+          :src="img.url"
+          removable
+          can-set-primary
+          @remove="removeImage(img)"
+          @set-primary="setPrimary(img)"
+        />
+      </div>
+    </div>
+
     <div
       class="flex flex-col items-center justify-center rounded-md border-2 border-dashed px-4 py-6 text-center text-sm transition-colors"
       :class="
@@ -83,14 +125,5 @@ function removeAt(index: number) {
       />
     </div>
     <p v-if="hint" class="text-xs text-neutral-500 dark:text-neutral-400">{{ hint }}</p>
-    <div v-if="modelValue.length" class="flex flex-wrap gap-2">
-      <ImagePreview
-        v-for="(img, i) in modelValue"
-        :key="img.id"
-        :src="img.url"
-        removable
-        @remove="removeAt(i)"
-      />
-    </div>
   </div>
 </template>

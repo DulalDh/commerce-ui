@@ -68,6 +68,25 @@ function onImageFiles(files: File[]) {
   pendingImageFiles.value.push(...files);
 }
 
+async function onRemoveImage(image: UploadedImage) {
+  pendingImageFiles.value = pendingImageFiles.value.filter((f) => f !== image.file);
+  if (!productId.value || image.file) return;
+  try {
+    await productsService.deleteImage(productId.value, image.id);
+  } catch (err) {
+    error.value = err instanceof ApiError ? err.message : 'Failed to delete image';
+  }
+}
+
+async function onSetPrimaryImage(image: UploadedImage) {
+  if (!productId.value || image.file) return;
+  try {
+    await productsService.setPrimaryImage(productId.value, image.id);
+  } catch (err) {
+    error.value = err instanceof ApiError ? err.message : 'Failed to set feature image';
+  }
+}
+
 function toggleTag(id: string | number) {
   if (selectedTagIds.value.has(id)) selectedTagIds.value.delete(id);
   else selectedTagIds.value.add(id);
@@ -98,7 +117,7 @@ async function loadProduct() {
     brand_id: string;
     status: string;
     tags?: { id: string | number }[];
-    images?: { id: string; url: string }[];
+    images?: { id: string; url: string; is_primary?: boolean }[];
     variants?: Variant[];
     marketplace_status?: string;
   };
@@ -109,7 +128,11 @@ async function loadProduct() {
   form.brand_id = product.brand_id;
   form.status = product.status;
   selectedTagIds.value = new Set((product.tags ?? []).map((t) => t.id));
-  images.value = (product.images ?? []).map((img) => ({ id: String(img.id), url: img.url }));
+  images.value = (product.images ?? []).map((img) => ({
+    id: String(img.id),
+    url: img.url,
+    is_primary: img.is_primary,
+  }));
   variants.value = product.variants ?? [];
   marketplaceStatus.value = product.marketplace_status ?? null;
 }
@@ -232,7 +255,14 @@ onMounted(async () => {
           </div>
         </div>
 
-        <ImageUpload v-model="images" label="Product images" @files="onImageFiles" />
+        <ImageUpload
+          v-model="images"
+          label="Product images"
+          hint="The first image (or the one marked Feature Image) is used as the product's cover image."
+          @files="onImageFiles"
+          @remove="onRemoveImage"
+          @set-primary="onSetPrimaryImage"
+        />
 
         <p v-if="error" class="text-sm text-danger-600">{{ error }}</p>
         <Button type="submit" :loading="saving" class="w-fit">Save product</Button>

@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { productsService, categoriesService, ApiError } from '@org/api-client';
+import { getFeatureImageUrl, type ProductImage } from '@org/types';
 import { Card, Select, Badge } from '@org/ui';
 
 interface Product {
@@ -9,7 +10,7 @@ interface Product {
   name: string;
   slug: string;
   price: number;
-  images?: { url: string }[];
+  images?: ProductImage[];
   flash_sale_discount_percentage?: number;
 }
 
@@ -75,16 +76,12 @@ onMounted(load);
             -{{ product.flash_sale_discount_percentage }}%
           </Badge>
           <img
-            v-if="product.images?.[0]"
-            :src="product.images[0].url"
+            :src="getFeatureImageUrl(product.images, 'small')"
             :alt="product.name"
             loading="lazy"
             decoding="async"
             class="h-40 w-full object-cover"
           />
-          <div v-else class="flex h-40 w-full items-center justify-center bg-neutral-100 text-neutral-400 dark:bg-neutral-700">
-            No image
-          </div>
           <div class="p-3">
             <p class="truncate text-sm font-medium text-neutral-900 dark:text-neutral-100">{{ product.name }}</p>
             <p class="text-sm text-neutral-500">${{ product.price }}</p>
