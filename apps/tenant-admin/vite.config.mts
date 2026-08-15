@@ -11,6 +11,7 @@ export default defineConfig(() => ({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
+    conditions: ['@org/source'],
   },
   server: {
     port: 4200,

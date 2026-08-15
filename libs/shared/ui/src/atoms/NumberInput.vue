@@ -27,6 +27,10 @@ function onInput(event: Event) {
   const raw = (event.target as HTMLInputElement).value;
   emit('update:modelValue', raw === '' ? null : Number(raw));
 }
+
+function onWheel(event: WheelEvent) {
+  (event.target as HTMLInputElement).blur();
+}
 </script>
 
 <template>
@@ -52,6 +56,7 @@ function onInput(event: Event) {
       :aria-describedby="descriptionId"
       :class="classes"
       @input="onInput"
+      @wheel="onWheel"
     />
   </FieldWrapper>
 </template>
