@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { productsService, ApiError } from '@org/api-client';
+import { storefrontCatalogService, ApiError } from '@org/api-client';
 import { getFeatureImage, getImageVariant, type ProductImage } from '@org/types';
 import { formatCurrency } from '@org/utils';
 import { Card, Button, ImagePreview, Select, Badge } from '@org/ui';
@@ -40,7 +40,7 @@ const otherImages = computed(() =>
 async function load() {
   loading.value = true;
   try {
-    product.value = await productsService.get(route.params.slug as string);
+    product.value = await storefrontCatalogService.products.get(route.params.slug as string);
   } finally {
     loading.value = false;
   }

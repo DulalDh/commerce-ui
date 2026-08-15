@@ -20,3 +20,27 @@ export const productsService = {
   publishToMarketplace: (productId: string | number) =>
     api.put(`/products/${productId}/publish-to-marketplace`),
 };
+
+/**
+ * Anonymous storefront browsing. Backed by /storefront/* - unauthenticated,
+ * published-products-only, tenant resolved from the X-Tenant-ID header
+ * (see ResolveTenant::allowsPublicTenantHeader on the backend). Distinct
+ * from productsService/categoriesService above, which require a logged-in
+ * tenant-admin session and include drafts.
+ */
+export const storefrontCatalogService = {
+  products: {
+    list: (params?: Record<string, unknown>): Promise<Product[]> =>
+      api.get('/storefront/products', { params }),
+    get: (slug: string): Promise<Product> => api.get(`/storefront/products/${slug}`),
+  },
+  categories: {
+    list: (): Promise<Category[]> => api.get('/storefront/categories'),
+  },
+  brands: {
+    list: (): Promise<Brand[]> => api.get('/storefront/brands'),
+  },
+  tags: {
+    list: (): Promise<Tag[]> => api.get('/storefront/tags'),
+  },
+};

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { productsService, categoriesService, ApiError } from '@org/api-client';
+import { storefrontCatalogService, ApiError } from '@org/api-client';
 import { getFeatureImageUrl, type ProductImage } from '@org/types';
 import { formatCurrency } from '@org/utils';
 import { Card, Select, Badge } from '@org/ui';
@@ -39,8 +39,10 @@ async function load() {
   error.value = '';
   try {
     const [productList, categoryList] = await Promise.all([
-      productsService.list(categoryId.value ? { category_id: categoryId.value } : undefined),
-      categories.value.length ? Promise.resolve(categories.value) : categoriesService.list(),
+      storefrontCatalogService.products.list(
+        categoryId.value ? { category_id: categoryId.value } : undefined,
+      ),
+      categories.value.length ? Promise.resolve(categories.value) : storefrontCatalogService.categories.list(),
     ]);
     products.value = productList;
     categories.value = categoryList as Category[];
