@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { subscriptionsService, plansService, ApiError } from '@org/api-client';
 import { Card, Button, Badge } from '@org/ui';
+import { formatCurrency } from '@org/utils';
 
 interface Plan {
   id: string | number;
@@ -71,7 +72,7 @@ onMounted(load);
           class="flex flex-col gap-2 rounded-lg border border-neutral-200 p-4 dark:border-neutral-700"
         >
           <p class="font-semibold text-neutral-900 dark:text-neutral-100">{{ plan.name }}</p>
-          <p class="text-2xl font-bold text-neutral-900 dark:text-neutral-100">${{ plan.price }}</p>
+          <p class="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{{ formatCurrency(plan.price) }}</p>
           <p v-if="plan.limits" class="text-xs text-neutral-500">
             {{ plan.limits.products ?? '∞' }} products · {{ plan.limits.staff ?? '∞' }} staff
           </p>

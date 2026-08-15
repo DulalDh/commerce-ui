@@ -16,6 +16,7 @@
     }
   },
   "dependencies": {
-    "@org/ui": "*"
+    "@org/ui": "*",
+    "@org/types": "*"
   }
 }

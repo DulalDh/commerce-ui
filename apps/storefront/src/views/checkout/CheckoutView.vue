@@ -3,6 +3,7 @@ import { reactive, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { cartService, shippingService, ApiError } from '@org/api-client';
 import { Card, TextInput, Select, Button } from '@org/ui';
+import { formatCurrency } from '@org/utils';
 import { useCartStore } from '../../stores/cart';
 
 const cart = useCartStore();
@@ -88,7 +89,7 @@ async function onSubmit() {
 
         <div class="flex items-center justify-between border-t border-neutral-200 pt-4 text-sm dark:border-neutral-700">
           <span class="font-medium text-neutral-700 dark:text-neutral-200">
-            Subtotal: ${{ cart.subtotal.toFixed(2) }}
+            Subtotal: {{ formatCurrency(cart.subtotal) }}
           </span>
         </div>
 

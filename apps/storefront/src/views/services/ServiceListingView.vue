@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { servicesService, ApiError } from '@org/api-client';
 import { Card } from '@org/ui';
+import { formatCurrency } from '@org/utils';
 
 interface Service {
   id: string | number;
@@ -43,7 +44,7 @@ onMounted(load);
         <Card>
           <p class="truncate text-sm font-medium text-neutral-900 dark:text-neutral-100">{{ service.name }}</p>
           <p class="text-sm text-neutral-500">
-            ${{ service.price }}<span v-if="service.pricing_model === 'hourly'">/hr</span>
+            {{ formatCurrency(service.price) }}<span v-if="service.pricing_model === 'hourly'">/hr</span>
           </p>
         </Card>
       </RouterLink>

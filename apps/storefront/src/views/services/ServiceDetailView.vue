@@ -3,6 +3,7 @@ import { onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { servicesService, bookingsService, reviewsService, ApiError } from '@org/api-client';
 import { Card, TextInput, DatePicker, Button, Badge } from '@org/ui';
+import { formatCurrency } from '@org/utils';
 
 interface Service {
   id: string | number;
@@ -90,7 +91,7 @@ async function onBook() {
     <Card>
       <h1 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">{{ service.name }}</h1>
       <p class="mt-2 text-lg text-neutral-700 dark:text-neutral-200">
-        ${{ service.price }}<span v-if="service.pricing_model === 'hourly'">/hr</span>
+        {{ formatCurrency(service.price) }}<span v-if="service.pricing_model === 'hourly'">/hr</span>
       </p>
       <p v-if="service.duration_minutes" class="mt-1 text-sm text-neutral-500">
         Duration: {{ service.duration_minutes }} minutes

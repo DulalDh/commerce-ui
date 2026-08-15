@@ -3,6 +3,7 @@ import { onMounted, reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { ordersService, shippingService, ApiError } from '@org/api-client';
 import { Card, Badge, Select, TextInput, Button, Table, type TableColumn } from '@org/ui';
+import { formatCurrency } from '@org/utils';
 
 interface OrderItem {
   id: string | number;
@@ -124,12 +125,12 @@ onMounted(load);
         </h2>
         <Badge variant="primary">{{ order.status }}</Badge>
       </div>
-      <p class="mt-2 text-sm text-neutral-500">Total: ${{ order.total }}</p>
+      <p class="mt-2 text-sm text-neutral-500">Total: {{ formatCurrency(order.total) }}</p>
     </Card>
 
     <Card title="Items">
       <Table :columns="itemColumns" :rows="(order.items ?? []) as never" row-key="id">
-        <template #cell-price="{ row }">${{ (row as OrderItem).price }}</template>
+        <template #cell-price="{ row }">{{ formatCurrency((row as OrderItem).price) }}</template>
       </Table>
     </Card>
 
@@ -154,7 +155,7 @@ onMounted(load);
         </Button>
         <p v-if="rateError" class="text-sm text-danger-600">{{ rateError }}</p>
         <p v-else-if="shippingRate !== null" class="text-sm text-neutral-600 dark:text-neutral-300">
-          Estimated rate: ${{ shippingRate.toFixed(2) }}
+          Estimated rate: {{ formatCurrency(shippingRate) }}
         </p>
         <p v-if="shipmentError" class="text-sm text-danger-600">{{ shipmentError }}</p>
         <p v-if="shipmentCreated" class="text-sm text-success-600">Shipment created.</p>

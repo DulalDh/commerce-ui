@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { SidePanel, Button } from '@org/ui';
+import { formatCurrency } from '@org/utils';
 import { useCartStore } from '../stores/cart';
 
 const cart = useCartStore();
@@ -25,7 +26,7 @@ function onCheckout() {
       >
         <div>
           <p class="text-sm font-medium text-neutral-900 dark:text-neutral-100">{{ item.name }}</p>
-          <p class="text-xs text-neutral-500">${{ item.price }} × {{ item.quantity }}</p>
+          <p class="text-xs text-neutral-500">{{ formatCurrency(item.price) }} × {{ item.quantity }}</p>
         </div>
         <div class="flex items-center gap-2">
           <button
@@ -49,7 +50,7 @@ function onCheckout() {
     <template #footer>
       <div class="flex items-center justify-between">
         <span class="text-sm font-medium text-neutral-700 dark:text-neutral-200">
-          Subtotal: ${{ cart.subtotal.toFixed(2) }}
+          Subtotal: {{ formatCurrency(cart.subtotal) }}
         </span>
         <Button :disabled="!cart.items.length" @click="onCheckout">Checkout</Button>
       </div>

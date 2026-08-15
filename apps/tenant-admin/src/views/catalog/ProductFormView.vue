@@ -20,6 +20,7 @@ import {
   Badge,
 } from '@org/ui';
 import { useSlug } from '@/composables/useSlug';
+import { formatCurrency } from '@org/utils';
 
 interface Option {
   label: string;
@@ -325,7 +326,7 @@ onMounted(async () => {
     <Card v-if="productId" title="Variants">
       <div class="flex flex-col gap-3">
         <div v-for="variant in variants" :key="variant.id" class="flex items-center justify-between rounded-md border border-neutral-200 px-3 py-2 text-sm dark:border-neutral-700">
-          <span>{{ variant.name }} — ${{ variant.price }}</span>
+          <span>{{ variant.name }} — {{ formatCurrency(variant.price) }}</span>
           <button class="text-danger-600" @click="onRemoveVariant(variant)">Remove</button>
         </div>
 

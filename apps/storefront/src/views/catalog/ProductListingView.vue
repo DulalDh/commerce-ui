@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { productsService, categoriesService, ApiError } from '@org/api-client';
 import { getFeatureImageUrl, type ProductImage } from '@org/types';
+import { formatCurrency } from '@org/utils';
 import { Card, Select, Badge } from '@org/ui';
 
 interface Product {
@@ -84,7 +85,7 @@ onMounted(load);
           />
           <div class="p-3">
             <p class="truncate text-sm font-medium text-neutral-900 dark:text-neutral-100">{{ product.name }}</p>
-            <p class="text-sm text-neutral-500">${{ product.price }}</p>
+            <p class="text-sm text-neutral-500">{{ formatCurrency(product.price) }}</p>
           </div>
         </Card>
       </RouterLink>

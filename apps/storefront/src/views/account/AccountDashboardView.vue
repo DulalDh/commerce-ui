@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { accountService, ApiError } from '@org/api-client';
 import { Card, Table, Badge, type TableColumn } from '@org/ui';
+import { formatCurrency } from '@org/utils';
 
 interface Order {
   id: string | number;
@@ -117,7 +118,7 @@ onMounted(load);
         <template #cell-status="{ row }">
           <Badge :variant="statusVariant[(row as Order).status] ?? 'neutral'">{{ (row as Order).status }}</Badge>
         </template>
-        <template #cell-total="{ row }">${{ (row as Order).total }}</template>
+        <template #cell-total="{ row }">{{ formatCurrency((row as Order).total) }}</template>
       </Table>
     </Card>
 

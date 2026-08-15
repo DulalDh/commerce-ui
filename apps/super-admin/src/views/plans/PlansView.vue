@@ -2,6 +2,7 @@
 import { onMounted, reactive, ref } from 'vue';
 import { plansService, ApiError } from '@org/api-client';
 import { Card, Table, Button, Modal, TextInput, NumberInput, type TableColumn } from '@org/ui';
+import { formatCurrency } from '@org/utils';
 
 interface Plan {
   id: string | number;
@@ -102,7 +103,7 @@ onMounted(load);
 
     <p v-if="listError" class="mb-3 text-sm text-danger-600">{{ listError }}</p>
     <Table :columns="columns" :rows="plans as never" :loading="loading" row-key="id">
-      <template #cell-price="{ row }">${{ (row as Plan).price }}</template>
+      <template #cell-price="{ row }">{{ formatCurrency((row as Plan).price) }}</template>
       <template #cell-actions="{ row }">
         <div class="flex gap-2">
           <button class="text-primary-600" @click="openEdit(row as Plan)">Edit</button>

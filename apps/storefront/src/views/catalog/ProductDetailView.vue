@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { productsService, ApiError } from '@org/api-client';
 import { getFeatureImage, getImageVariant, type ProductImage } from '@org/types';
+import { formatCurrency } from '@org/utils';
 import { Card, Button, ImagePreview, Select, Badge } from '@org/ui';
 import { useCartStore } from '../../stores/cart';
 
@@ -95,7 +96,7 @@ onMounted(load);
           -{{ product.flash_sale_discount_percentage }}% flash sale
         </Badge>
       </div>
-      <p class="mt-2 text-lg text-neutral-700 dark:text-neutral-200">${{ product.price }}</p>
+      <p class="mt-2 text-lg text-neutral-700 dark:text-neutral-200">{{ formatCurrency(product.price) }}</p>
       <p v-if="product.description" class="mt-3 text-sm text-neutral-600 dark:text-neutral-300">
         {{ product.description }}
       </p>

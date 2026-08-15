@@ -3,6 +3,7 @@ import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { marketplaceService } from '@org/api-client';
 import { Card, TextInput, Select, Badge } from '@org/ui';
+import { formatCurrency } from '@org/utils';
 
 interface SearchResult {
   id: string | number;
@@ -73,7 +74,7 @@ search();
             <p class="truncate text-sm font-medium text-neutral-900 dark:text-neutral-100">{{ result.name }}</p>
             <Badge variant="neutral">{{ result.type }}</Badge>
           </div>
-          <p v-if="result.price" class="mt-1 text-sm text-neutral-500">${{ result.price }}</p>
+          <p v-if="result.price" class="mt-1 text-sm text-neutral-500">{{ formatCurrency(result.price) }}</p>
         </Card>
       </RouterLink>
     </div>

@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { productsService, ApiError } from '@org/api-client';
 import { getFeatureImageUrl, type ProductImage } from '@org/types';
+import { formatCurrency } from '@org/utils';
 import { Card, Table, Button, Badge, type TableColumn } from '@org/ui';
 
 interface Product {
@@ -74,7 +75,7 @@ onMounted(load);
           class="h-10 w-10 rounded object-cover"
         />
       </template>
-      <template #cell-price="{ row }">${{ (row as Product).price }}</template>
+      <template #cell-price="{ row }">{{ formatCurrency((row as Product).price) }}</template>
       <template #cell-status="{ row }">
         <Badge :variant="statusVariant[(row as Product).status] ?? 'neutral'">
           {{ (row as Product).status }}

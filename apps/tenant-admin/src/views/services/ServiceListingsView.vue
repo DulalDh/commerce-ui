@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { servicesService, ApiError } from '@org/api-client';
 import { Card, Table, Button, Badge, type TableColumn } from '@org/ui';
+import { formatCurrency } from '@org/utils';
 
 interface Service {
   id: string | number;
@@ -62,7 +63,7 @@ onMounted(load);
 
     <p v-if="listError" class="mb-3 text-sm text-danger-600">{{ listError }}</p>
     <Table :columns="columns" :rows="services as never" :loading="loading" row-key="id">
-      <template #cell-price="{ row }">${{ (row as Service).price }}</template>
+      <template #cell-price="{ row }">{{ formatCurrency((row as Service).price) }}</template>
       <template #cell-status="{ row }">
         <Badge :variant="statusVariant[(row as Service).status] ?? 'neutral'">{{ (row as Service).status }}</Badge>
       </template>
