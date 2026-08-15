@@ -19,6 +19,7 @@ import {
   ImageUpload,
   Badge,
 } from '@org/ui';
+import { useSlug } from '@/composables/useSlug';
 
 interface Option {
   label: string;
@@ -65,6 +66,7 @@ const statusOptions = [
 const loading = ref(true);
 const saving = ref(false);
 const error = ref('');
+const { onNameInput, onSlugInput, reset: resetSlug } = useSlug((slug) => (form.slug = slug));
 
 function onImageFiles(files: File[]) {
   pendingImageFiles.value.push(...files);
@@ -172,6 +174,7 @@ async function loadProduct() {
   };
   form.name = product.name;
   form.slug = product.slug;
+  resetSlug(true);
   form.price = product.price;
   form.category_id = product.category_id;
   form.brand_id = product.brand_id;
@@ -283,8 +286,8 @@ onMounted(async () => {
       <p v-if="loading" class="text-sm text-neutral-500">Loading…</p>
       <form v-else class="flex flex-col gap-4" @submit.prevent="onSubmit">
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <TextInput v-model="form.name" label="Name" required />
-          <TextInput v-model="form.slug" label="Slug" required />
+          <TextInput v-model="form.name" label="Name" required @input="onNameInput(form.name)" />
+          <TextInput v-model="form.slug" label="Slug" required @input="onSlugInput" />
           <NumberInput v-model="form.price" label="Price" required min="0" step="0.01" />
           <Select v-model="form.status" label="Status" :options="statusOptions" />
           <Select v-model="form.category_id" label="Category" :options="categoryOptions" placeholder="Select category" />

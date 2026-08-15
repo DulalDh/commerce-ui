@@ -2,6 +2,7 @@
 import { onMounted, reactive, ref } from 'vue';
 import { tagsService, ApiError } from '@org/api-client';
 import { Card, Table, Button, Modal, TextInput, type TableColumn } from '@org/ui';
+import { useSlug } from '@/composables/useSlug';
 
 interface Tag {
   id: string | number;
@@ -24,6 +25,7 @@ const editingId = ref<string | number | null>(null);
 const form = reactive({ name: '', slug: '' });
 const saving = ref(false);
 const formError = ref('');
+const { onNameInput, onSlugInput, reset: resetSlug } = useSlug((slug) => (form.slug = slug));
 
 async function load() {
   loading.value = true;
@@ -41,6 +43,7 @@ function openCreate() {
   editingId.value = null;
   form.name = '';
   form.slug = '';
+  resetSlug(false);
   formError.value = '';
   modalOpen.value = true;
 }
@@ -49,6 +52,7 @@ function openEdit(tag: Tag) {
   editingId.value = tag.id;
   form.name = tag.name;
   form.slug = tag.slug;
+  resetSlug(true);
   formError.value = '';
   modalOpen.value = true;
 }
@@ -102,8 +106,8 @@ onMounted(load);
 
     <Modal v-model="modalOpen" :title="editingId ? 'Edit tag' : 'New tag'">
       <form class="flex flex-col gap-4" @submit.prevent="onSubmit">
-        <TextInput v-model="form.name" label="Name" required />
-        <TextInput v-model="form.slug" label="Slug" required />
+        <TextInput v-model="form.name" label="Name" required @input="onNameInput(form.name)" />
+        <TextInput v-model="form.slug" label="Slug" required @input="onSlugInput" />
         <p v-if="formError" class="text-sm text-danger-600">{{ formError }}</p>
         <Button type="submit" :loading="saving" class="w-fit">Save</Button>
       </form>

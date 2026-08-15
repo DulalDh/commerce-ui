@@ -2,6 +2,7 @@
 import { computed, onMounted, reactive, ref } from 'vue';
 import { categoriesService, ApiError } from '@org/api-client';
 import { Card, Table, Button, Modal, TextInput, Select, type TableColumn } from '@org/ui';
+import { useSlug } from '@/composables/useSlug';
 
 interface Category {
   id: string | number;
@@ -26,6 +27,7 @@ const editingId = ref<string | number | null>(null);
 const form = reactive({ name: '', slug: '', parent_id: '' as string | number | '' });
 const saving = ref(false);
 const formError = ref('');
+const { onNameInput, onSlugInput, reset: resetSlug } = useSlug((slug) => (form.slug = slug));
 
 const parentOptions = computed(() =>
   categories.value
@@ -54,6 +56,7 @@ function openCreate() {
   form.name = '';
   form.slug = '';
   form.parent_id = '';
+  resetSlug(false);
   formError.value = '';
   modalOpen.value = true;
 }
@@ -63,6 +66,7 @@ function openEdit(category: Category) {
   form.name = category.name;
   form.slug = category.slug;
   form.parent_id = category.parent_id ?? '';
+  resetSlug(true);
   formError.value = '';
   modalOpen.value = true;
 }
@@ -122,8 +126,8 @@ onMounted(load);
 
     <Modal v-model="modalOpen" :title="editingId ? 'Edit category' : 'New category'">
       <form class="flex flex-col gap-4" @submit.prevent="onSubmit">
-        <TextInput v-model="form.name" label="Name" required />
-        <TextInput v-model="form.slug" label="Slug" required />
+        <TextInput v-model="form.name" label="Name" required @input="onNameInput(form.name)" />
+        <TextInput v-model="form.slug" label="Slug" required @input="onSlugInput" />
         <Select v-model="form.parent_id" label="Parent category" :options="parentOptions" placeholder="None (top level)" />
         <p v-if="formError" class="text-sm text-danger-600">{{ formError }}</p>
         <Button type="submit" :loading="saving" class="w-fit">Save</Button>
