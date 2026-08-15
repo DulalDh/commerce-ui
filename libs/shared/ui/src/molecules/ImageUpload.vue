@@ -7,6 +7,8 @@ export interface UploadedImage {
   url: string;
   file?: File;
   is_primary?: boolean;
+  status?: 'uploading' | 'error';
+  error?: string;
 }
 
 const props = withDefaults(
@@ -25,6 +27,7 @@ const emit = defineEmits<{
   files: [files: File[]];
   remove: [image: UploadedImage];
   'set-primary': [image: UploadedImage];
+  retry: [image: UploadedImage];
 }>();
 
 const dragOver = ref(false);
@@ -69,6 +72,10 @@ function setPrimary(image: UploadedImage) {
   emit('update:modelValue', next);
   emit('set-primary', image);
 }
+
+function retryImage(image: UploadedImage) {
+  emit('retry', image);
+}
 </script>
 
 <template>
@@ -83,7 +90,10 @@ function setPrimary(image: UploadedImage) {
         primary
         removable
         size="lg"
+        :status="featureImage.status"
+        :error="featureImage.error"
         @remove="removeImage(featureImage)"
+        @retry="retryImage(featureImage)"
       />
       <div v-if="otherImages.length" class="flex flex-wrap gap-2">
         <ImagePreview
@@ -92,8 +102,11 @@ function setPrimary(image: UploadedImage) {
           :src="img.url"
           removable
           can-set-primary
+          :status="img.status"
+          :error="img.error"
           @remove="removeImage(img)"
           @set-primary="setPrimary(img)"
+          @retry="retryImage(img)"
         />
       </div>
     </div>

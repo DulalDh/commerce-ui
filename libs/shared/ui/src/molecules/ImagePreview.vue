@@ -7,11 +7,13 @@ withDefaults(
     primary?: boolean;
     canSetPrimary?: boolean;
     size?: 'sm' | 'lg';
+    status?: 'uploading' | 'error';
+    error?: string;
   }>(),
   { alt: '', size: 'sm' },
 );
 
-defineEmits<{ remove: []; 'set-primary': [] }>();
+defineEmits<{ remove: []; 'set-primary': []; retry: [] }>();
 </script>
 
 <template>
@@ -25,6 +27,30 @@ defineEmits<{ remove: []; 'set-primary': [] }>();
     ]"
   >
     <img :src="src" :alt="alt" loading="lazy" decoding="async" class="h-full w-full object-cover" />
+
+    <div
+      v-if="status === 'uploading'"
+      class="absolute inset-0 flex items-center justify-center bg-black/50"
+    >
+      <span
+        class="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white"
+        aria-label="Uploading"
+      />
+    </div>
+
+    <div
+      v-else-if="status === 'error'"
+      class="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-danger-900/70 p-1 text-center"
+    >
+      <span class="text-[10px] font-medium text-white">{{ error || 'Upload failed' }}</span>
+      <button
+        type="button"
+        class="rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-medium text-neutral-800 hover:bg-white"
+        @click="$emit('retry')"
+      >
+        Retry
+      </button>
+    </div>
 
     <span
       v-if="primary"

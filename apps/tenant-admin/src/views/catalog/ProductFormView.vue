@@ -34,7 +34,9 @@ interface Variant {
 
 const route = useRoute();
 const router = useRouter();
-const productId = computed(() => (route.params.id === 'new' ? null : (route.params.id as string)));
+const routeId = computed(() => (route.params.id === 'new' ? null : (route.params.id as string)));
+const savedProductId = ref<string | null>(null);
+const productId = computed(() => routeId.value ?? savedProductId.value);
 
 const form = reactive({
   name: '',
@@ -76,6 +78,53 @@ async function onRemoveImage(image: UploadedImage) {
   } catch (err) {
     error.value = err instanceof ApiError ? err.message : 'Failed to delete image';
   }
+}
+
+function updateImage(id: string, patch: Partial<UploadedImage>) {
+  images.value = images.value.map((img) => (img.id === id ? { ...img, ...patch } : img));
+}
+
+async function uploadPendingImages(targetProductId: string) {
+  const pending = images.value.filter((img) => img.file);
+  if (!pending.length) return true;
+
+  pending.forEach((img) => updateImage(img.id, { status: 'uploading', error: undefined }));
+
+  try {
+    const fd = new FormData();
+    pending.forEach((img) => fd.append('images[]', img.file as File));
+    const primaryIndex = pending.findIndex((img) => img.is_primary);
+    if (primaryIndex !== -1) fd.append('primary_index', String(primaryIndex));
+
+    const uploaded = (await productsService.uploadImage(targetProductId, fd)) as unknown as {
+      id: string;
+      url: string;
+    }[];
+
+    pending.forEach((img, index) => {
+      const result = uploaded[index];
+      pendingImageFiles.value = pendingImageFiles.value.filter((f) => f !== img.file);
+      updateImage(img.id, {
+        id: String(result.id),
+        url: result.url,
+        file: undefined,
+        status: undefined,
+        error: undefined,
+      });
+    });
+    return true;
+  } catch (err) {
+    const message = err instanceof ApiError ? err.message : 'Upload failed';
+    pending.forEach((img) => updateImage(img.id, { status: 'error', error: message }));
+    error.value = `Failed to upload ${pending.length > 1 ? 'images' : 'image'}. Fix them and save again.`;
+    return false;
+  }
+}
+
+async function onRetryImage(image: UploadedImage) {
+  if (!productId.value || !image.file) return;
+  error.value = '';
+  await uploadPendingImages(productId.value);
 }
 
 async function onSetPrimaryImage(image: UploadedImage) {
@@ -169,14 +218,14 @@ async function onSubmit() {
       ? await productsService.update(productId.value, payload)
       : await productsService.create(payload);
 
-    const savedId = (saved as unknown as { id: string | number }).id;
-
-    for (const file of pendingImageFiles.value) {
-      const fd = new FormData();
-      fd.append('image', file);
-      await productsService.uploadImage(savedId, fd);
+    const savedId = String((saved as unknown as { id: string | number }).id);
+    if (!routeId.value) {
+      savedProductId.value = savedId;
+      router.replace(`/catalog/products/${savedId}`);
     }
-    pendingImageFiles.value = [];
+
+    const allUploaded = await uploadPendingImages(savedId);
+    if (!allUploaded) return;
 
     router.push('/catalog/products');
   } catch (err) {
@@ -258,10 +307,11 @@ onMounted(async () => {
         <ImageUpload
           v-model="images"
           label="Product images"
-          hint="The first image (or the one marked Feature Image) is used as the product's cover image."
+          hint="Select or drop multiple images at once — they upload together when you save. The first image (or the one marked Feature Image) is used as the product's cover image."
           @files="onImageFiles"
           @remove="onRemoveImage"
           @set-primary="onSetPrimaryImage"
+          @retry="onRetryImage"
         />
 
         <p v-if="error" class="text-sm text-danger-600">{{ error }}</p>
