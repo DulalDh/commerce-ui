@@ -1,125 +1,123 @@
-# Commerge Frontend
+# Commerge
 
-Frontend for a multi-tenant SaaS marketplace platform — three Vue 3 apps (storefront, tenant admin, super admin) in an Nx monorepo, consuming the [Commerge backend API](../Projects/docs/postman/marketplace-api.postman_collection.json) (Laravel, frozen at v1.0.0).
+**A multi-tenant marketplace platform with three purpose-built Vue applications.**
 
-Built phase-by-phase per `Frontend-Development-Plan.md`. All 5 phases (Foundation → Product Marketplace → Platform Layer → Service Marketplace → Reports/Notifications/CMS → Hardening) are complete.
+Commerge brings product commerce and service bookings together in one platform. Merchants manage their storefronts, platform operators oversee the marketplace, and customers browse and shop through a public storefront.
 
-## Tools & Technology
+> Portfolio demo: this repository contains the frontend monorepo. The apps connect to the Commerge Laravel API; a running backend is needed for live data and authenticated workflows.
 
-| Layer | Choice |
-|---|---|
-| Framework | Vue 3 (`<script setup>`, Composition API) |
-| Language | TypeScript |
-| Monorepo | Nx 23 (npm workspaces) |
-| Build tool | Vite 8 (rolldown-vite) |
-| CSS | Tailwind CSS v4 |
-| Client state | Pinia |
-| HTTP | Axios, with a single interceptor-driven client |
-| Routing | Vue Router 4 |
-| E2E testing | Playwright (`@nx/playwright`) |
-| Unit testing | Vitest |
+## Applications
 
-## Apps
+| App | Local URL | Audience | What it covers |
+| --- | --- | --- | --- |
+| Tenant Admin | `http://localhost:4200` | Merchants and service providers | Catalog, inventory, orders, bookings, promotions, store settings, and reports |
+| Super Admin | `http://localhost:4201` | Platform operators | Merchant oversight, marketplace review, plans, roles and permissions, CMS, and reports |
+| Storefront | `http://localhost:4202` | Customers | Public product and service discovery, shopping, and customer flows |
 
-| App | Port (dev) | Who uses it |
-|---|---|---|
-| `tenant-admin` | 4200 | Merchant / service-provider admin dashboard |
-| `super-admin` | 4201 | Platform super admin |
-| `storefront` | 4202 | End customers (public) |
+## Highlights
 
-Each app is routing + layout composition only; all real UI and data-fetching logic lives in `apps/<app>/src/views/*` composed from the shared libs below.
+- **Three coordinated applications** in an Nx monorepo, sharing a consistent design system and typed API layer.
+- **Multi-tenant request handling** that attaches the authenticated user's tenant identity to API requests.
+- **Role and permission-aware navigation** with shared authentication, route guards, and menu configuration.
+- **Reusable UI system** with accessible form controls, tables, dialogs, side panels, charts, and light/dark theme support.
+- **Product and service workflows**, including catalog management, inventory, orders, bookings, staff, promotions, and marketplace review.
+- **Typed API services** organized by backend module, with shared request and response handling.
 
-## Shared libraries (`libs/shared/*`)
+## Built with
 
-| Lib | Package | What it is |
-|---|---|---|
-| `ui` | `@org/ui` | Design system — atoms (TextInput, Select, DatePicker, …) and molecules (Button, Card, Modal, SidePanel, Table, ImageUpload, BarChart, …) built with Tailwind, dark-mode aware, keyboard/aria accessible |
-| `theme` | `@org/theme` | `theme.js` design tokens (single source of truth, mirrored into Tailwind's `@theme` CSS block) + `useTheme()` light/dark composable |
-| `api-client` | `@org/api-client` | One axios instance with request/response interceptors (auth token, tenant header, envelope unwrap, 401 → refresh-token retry) + a typed service file per backend module (21 modules) |
-| `types` | `@org/types` | TypeScript interfaces per backend module, consumed by `api-client`'s typed services |
-| `auth` | `@org/auth` | Pinia auth store, route guard, `usePermission()` composable |
-| `config` | `@org/config` | One `menu.json` per app + `filterMenu()` (tenant-type / permission aware) |
-| `utils` | `@org/utils` | Cross-cutting helpers (e.g. `normalizeChartData` for report responses) |
+| Area | Technology |
+| --- | --- |
+| Apps | Vue 3, Vue Router, TypeScript |
+| Monorepo | Nx 23, npm workspaces |
+| Build and styling | Vite 8, Tailwind CSS 4 |
+| State | Pinia |
+| API | Axios, shared typed service modules |
+| UI verification | Playwright smoke tests, Vitest |
 
-## Getting started
+## Architecture
+
+```text
+apps/
+  tenant-admin/     Merchant and service-provider console
+  super-admin/      Platform operations console
+  storefront/       Customer-facing marketplace
+
+libs/shared/
+  ui/               Reusable components and design system
+  theme/            Design tokens and theme composable
+  api-client/       Axios client and typed API services
+  types/            Shared TypeScript API models
+  auth/             Auth store, route guard, permission helper
+  config/           App menus and permission-aware filtering
+  utils/            Cross-app utilities
+```
+
+The apps provide routing and layout composition. Shared behavior and components live in `libs/shared`, while feature screens are organized under each app's `src/views` directory.
+
+## Run locally
+
+### Requirements
+
+- Node.js compatible with the installed dependencies
+- npm
+- Access to a running Commerge API for live data
+
+Install dependencies from the repository root:
 
 ```bash
 npm install
 ```
 
-Each app reads its API base URL from `apps/<app>/.env` (`VITE_API_BASE_URL`, defaults to `http://127.0.0.1:8000/api/v1` — point it at a running instance of the Commerge backend).
+Each app reads `VITE_API_BASE_URL` from its `apps/<app>/.env` file. It defaults to `http://127.0.0.1:8000/api/v1`; set it to the base URL of your backend API as needed.
 
-### Run an app
-
-```bash
-npx nx serve tenant-admin     # http://localhost:4200
-npx nx serve super-admin      # http://localhost:4201
-npx nx serve storefront       # http://localhost:4202
-```
-
-### Build
+Start an app:
 
 ```bash
-npx nx build tenant-admin           # single app
-npx nx run-many -t build            # everything (apps + libs)
+npm exec nx serve @org/tenant-admin
+npm exec nx serve @org/super-admin
+npm exec nx serve @org/storefront
 ```
 
-### Sync TS project references
-
-Run after adding/removing cross-project imports, or whenever Nx reports the workspace as "out of sync":
+Build an app or all buildable projects:
 
 ```bash
-npx nx sync
+npm exec nx build @org/tenant-admin
+npm exec nx run-many -t build
 ```
 
-### E2E tests (Playwright)
+## Quality checks
+
+The repository includes Playwright smoke coverage for authentication screens and Vitest for unit tests. The current end-to-end specs cover auth screen rendering and unauthenticated redirects; broader user journeys require a running backend and seeded data.
+
+Run the Playwright specs for an app:
 
 ```bash
-npx playwright test --config=apps/tenant-admin/playwright.config.mts
-npx playwright test --config=apps/super-admin/playwright.config.mts
-npx playwright test --config=apps/storefront/playwright.config.mts
+npm exec nx run @org/tenant-admin:e2e
+npm exec nx run @org/super-admin:e2e
+npm exec nx run @org/storefront:e2e
 ```
 
-Current suites are smoke tests for the auth screens (login/register rendering, unauthenticated redirect) — they run against a plain `vite` dev server and don't require the backend to be up.
-
-### Useful Nx commands
+Useful Nx commands:
 
 ```bash
-npx nx graph                  # visualize the project/dependency graph
-npx nx show project ui        # inspect a project's targets
-npx nx reset                  # clear the Nx cache (use if a build looks stale)
+npm exec nx graph
+npm exec nx show project @org/tenant-admin
+npm exec nx sync
 ```
 
-## Project structure
+## Implementation notes
 
-```
-apps/
-  tenant-admin/   super-admin/   storefront/
-    src/
-      app/         # App.vue / AppShell.vue, NotificationBell, CartDrawer (storefront only)
-      views/       # one folder per feature (catalog, orders, bookings, cms, …)
-      router/
-      stores/      # app-local Pinia stores (e.g. storefront's cart)
-      main.ts
-    e2e/           # Playwright specs
-    .env
+- Feature views call module-specific services from `@org/api-client` instead of using Axios directly.
+- Tenant identity is derived from the authenticated user and sent through the `X-Tenant-ID` request header.
+- Navigation is defined in shared menu configuration and filtered using tenant type and permissions.
+- API types are maintained in `@org/types` from the backend's documented request and response examples.
 
-libs/shared/
-  ui/  theme/  api-client/  types/  auth/  config/  utils/
-```
+## Current scope
 
-## Conventions
+- API models are maintained by hand, so they need to be updated when the backend contract changes.
+- The current E2E suite is smoke-level and does not cover complete checkout or booking journeys.
+- Live API behavior depends on a compatible Commerge backend and configured data.
 
-- **Atomic design** inside `@org/ui`: `atoms/` are thin styled wrappers around a single form control; `molecules/` compose atoms (never duplicate an atom's markup).
-- **Views own their data fetching.** Every view that calls the API keeps `loading` / `error` refs and shows them in the template — there's no shared data-fetching abstraction (see Known limitations).
-- **Services, not raw axios, in views.** All HTTP calls go through `@org/api-client`'s per-module service objects (`productsService`, `bookingsService`, …), never `axios` directly.
-- **Tenant identity never comes from the URL.** The `X-Tenant-ID` header is set once from the authenticated user's `tenant_id` at login and cleared on logout — no view reads a tenant id from route params or query strings.
-- **Menus are data, not markup.** Nav items live in `@org/config`'s `menu.json` files, filtered at render time by tenant type / permission — never hardcoded in a component.
+## License
 
-## Known limitations / deviations from the original plan
-
-- **`@tanstack/vue-query` is installed but unused.** Views fetch data with a plain `ref` + `onMounted` + try/catch/finally pattern instead. Adopting Vue Query for caching/refetching is a reasonable follow-up but would touch most views.
-- **No OpenAPI spec.** `@org/types` is hand-written from the Postman collection's example bodies (the plan's documented fallback) rather than generated — it will drift if the backend API changes without a corresponding frontend update.
-- **RBAC on the storefront is coarse.** `usePermission().can()` exists but most storefront nav items don't set a `permission` — customer-level permission granularity wasn't part of the backend's RBAC model (that's roles/permissions for admin users, not customers).
-- **Playwright coverage is smoke-level only**, covering unauthenticated auth screens. Full user-journey e2e (login → checkout, login → booking lifecycle) needs a running backend and seeded test data, which wasn't available in this environment.
-- **No visual/manual QA against a live backend.** All builds were verified with `nx build`/`nx run-many -t build` and Playwright smoke tests against static dev servers; no requests were exercised against a real Laravel instance during development.
+This project is distributed under the MIT License. See [package.json](./package.json) for the repository license metadata.
